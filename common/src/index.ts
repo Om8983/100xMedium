@@ -21,9 +21,9 @@ export const blogCreateSchema = z.object({
 });
 
 export const blogUpdateSchema = z.object({
-  blogId : z.string(),
-  title : z.string(),
-  content : z.string()
+  blogId : z.string().optional(),
+  title : z.string().optional(),
+  content : z.string().optional()
 });
 
 

@@ -1,6 +1,6 @@
 {
   "name": "@om_wadhi/common",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "To install dependencies:",
   "main": "dist/index.js",
   "dependencies": {

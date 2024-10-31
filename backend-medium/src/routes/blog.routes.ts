@@ -129,4 +129,7 @@ router.get("/bulk", async (c) => {
     }
     return c.json({blogs : allBlog} , 200)
 })
+router.get("/blah", (c) => {
+    return c.json({msg : "success"}, 200)
+})
 export default router;

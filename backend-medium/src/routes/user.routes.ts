@@ -67,9 +67,13 @@ router.post("/signup", userSignupValidation, async (c) => {
 
   setCookie(c, "accessToken", accessToken, {
     maxAge: 15 * 60,
+    secure: false,
+    sameSite: "None",
   });
   setCookie(c, "refreshToken", refreshToken, {
     maxAge: 24 * 60 * 60,
+    secure: false,
+    sameSite: "None",
   });
 
   // 5. send response
@@ -128,9 +132,13 @@ router.post("/login", userLoginValidation, async (c) => {
 
   setCookie(c, "accessToken", accessToken, {
     maxAge: 15 * 60,
+    secure: false,
+    sameSite: "None",
   });
   setCookie(c, "refreshToken", refreshToken, {
     maxAge: 24 * 60 * 60,
+    secure: false,
+    sameSite: "None",
   });
   console.log(Math.floor(Date.now() / 1000) + 60 * 60);
 
@@ -139,7 +147,3 @@ router.post("/login", userLoginValidation, async (c) => {
 });
 
 export default router;
-[vars]
-DATABASE_URL="prisma://accelerate.prisma-data.net/?api_key=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlfa2V5IjoiMGY0OTA0Y2UtODI1Yy00ZTliLWE5ZTgtY2ZkNWIyNjk4M2U2IiwidGVuYW50X2lkIjoiNjAwYmFiNmI0N2Q1NTc1Mjk3OTM3ZWM5NmE2ODE0ZWJjOWNmMzhhZThiNjk5ZDBhZWE1MzVlYzgwYTAwMmZlYSIsImludGVybmFsX3NlY3JldCI6ImU4NGRjY2UxLTA0OTQtNDRjYy1hZDRiLWI0NDA3YzNhMzc1ZiJ9.QxgdUGmmnDfm7wjCEnHXCAfu2Do2vRJepyYd1zHc8Hs"
-ACCESSTOKEN_SECRET="sdkfjskjf"
-REFRESHTOKEN_SECRET="kshgiush"

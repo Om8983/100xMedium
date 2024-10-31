@@ -33,17 +33,17 @@ export declare const blogCreateSchema: z.ZodObject<{
     content: string;
 }>;
 export declare const blogUpdateSchema: z.ZodObject<{
-    blogId: z.ZodString;
-    title: z.ZodString;
-    content: z.ZodString;
+    blogId: z.ZodOptional<z.ZodString>;
+    title: z.ZodOptional<z.ZodString>;
+    content: z.ZodOptional<z.ZodString>;
 }, "strip", z.ZodTypeAny, {
-    title: string;
-    content: string;
-    blogId: string;
+    title?: string | undefined;
+    content?: string | undefined;
+    blogId?: string | undefined;
 }, {
-    title: string;
-    content: string;
-    blogId: string;
+    title?: string | undefined;
+    content?: string | undefined;
+    blogId?: string | undefined;
 }>;
 export type SignUpSchema = z.infer<typeof userSignUpSchema>;
 export type LoginSchema = z.infer<typeof userLoginSchema>;

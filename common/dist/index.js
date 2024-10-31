@@ -19,7 +19,7 @@ exports.blogCreateSchema = zod_1.z.object({
     content: zod_1.z.string()
 });
 exports.blogUpdateSchema = zod_1.z.object({
-    blogId: zod_1.z.string(),
-    title: zod_1.z.string(),
-    content: zod_1.z.string()
+    blogId: zod_1.z.string().optional(),
+    title: zod_1.z.string().optional(),
+    content: zod_1.z.string().optional()
 });

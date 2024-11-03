@@ -67,20 +67,20 @@ router.put("/updateBlog", updateBlogSchema, async (c) => {
 
     // validating data 
     const data = c.req.valid("json");
-    console.log("creating update obj");
+
     
     // lets create a dataObject that contains only the user updated data field 
     type Update = {
         title ?: string,
         content ?: string
     }
-    console.log("adding data");
+
     
     const updateBlogObj : Update = {};
     if(data.title)  updateBlogObj.title = data.title
     if(data.content) updateBlogObj.content = data.content
 
-    console.log(updateBlogObj);
+
     await prisma.post.update({
         where: {
             id: data.blogId,

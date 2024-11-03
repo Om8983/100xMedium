@@ -3,8 +3,8 @@ import bcrypt from "bcryptjs";
 import { PrismaClient } from "@prisma/client/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
 import { userLoginValidation, userSignupValidation } from "../zod/index.zod";
-import { sign } from "hono/jwt";
-import { setCookie } from "hono/cookie";
+import { decode, sign } from "hono/jwt";
+import { getCookie, setCookie } from "hono/cookie";
 type Bindings = {
   DATABASE_URL: string;
   ACCESSTOKEN_SECRET: string;
@@ -67,13 +67,15 @@ router.post("/signup", userSignupValidation, async (c) => {
 
   setCookie(c, "accessToken", accessToken, {
     maxAge: 15 * 60,
-    secure: false,
+    secure: true,
     sameSite: "None",
+    httpOnly: true,
   });
   setCookie(c, "refreshToken", refreshToken, {
     maxAge: 24 * 60 * 60,
-    secure: false,
+    secure: true,
     sameSite: "None",
+    httpOnly: true,
   });
 
   // 5. send response
@@ -132,18 +134,72 @@ router.post("/login", userLoginValidation, async (c) => {
 
   setCookie(c, "accessToken", accessToken, {
     maxAge: 15 * 60,
-    secure: false,
+    secure: true,
     sameSite: "None",
+    httpOnly: true,
   });
   setCookie(c, "refreshToken", refreshToken, {
     maxAge: 24 * 60 * 60,
-    secure: false,
+    httpOnly: true,
+    secure: true,
     sameSite: "None",
   });
-  console.log(Math.floor(Date.now() / 1000) + 60 * 60);
-
   // return response
   return c.json({ msg: "User login successfull!!" }, 200);
+});
+
+router.get("/authCheck", async (c) => {
+  //initializing prisma instance
+  const prisma = new PrismaClient({
+    datasourceUrl: c.env.DATABASE_URL,
+  }).$extends(withAccelerate());
+
+  // getting accessToken
+  const accessToken = getCookie(c, "accessToken");
+  
+  if (!accessToken) {
+    //getting refreshtoken
+    const refreshToken = getCookie(c, "refreshToken");
+    if (!refreshToken) {
+      return c.json({msg : "access Denied"}, 401);
+    } else {
+      // extracting user id from refreshToken
+      const decoded = decode(refreshToken);
+      type decodedData = {
+        id: string;
+      };
+      const { id } = decoded.payload as decodedData;
+
+      const user = await prisma.user.findUnique({
+        where: {
+          id: id,
+        },
+        select: {
+          id: true,
+          username: true,
+          email: true,
+        },
+      });
+      const accessToken = await sign(
+        {
+          id: user?.id,
+          email: user?.email,
+          username: user?.username,
+          iat: Math.floor(Date.now() / 1000),
+          exp: Math.floor(Date.now() / 1000) + 60 * 15,
+        },
+        c.env.ACCESSTOKEN_SECRET
+      );
+      setCookie(c, "accessToken", accessToken, {
+        maxAge: 15 * 60,
+        secure: true,
+        sameSite: "None",
+        httpOnly: true,
+      });
+      return c.json({msg: "access approved"}, 200)
+    }
+  }
+  return c.json({msg: "Auth Check Done"})
 });
 
 export default router;

@@ -1,23 +1,14 @@
-import axios from "axios"
-import Cookies from "js-cookie"
+import { BlogCard } from "../components/BlogCard"
+
 
 export const Blogs = () => {
 
-    const getCook = async () => {
-        const access = document.cookie
-        console.log(access);
-        
-        const refresh = Cookies.get("refreshToken")
-        console.log(refresh);
-        
-    }
-    const handler = async () => {
-        await axios.get("http://localhost:8787/api/v1/blog/blah", {withCredentials : true})
-    }
   return (
-    <div>
-        <button onClick={getCook}>Get Cookies</button>
-            <button onClick={handler}>send req</button>
+  <>
+    <div className=" flex flex-col gap-2 justify-center items-center h-screen w-screen">
+      <BlogCard></BlogCard>
+      <BlogCard></BlogCard>
     </div>
+  </>
   )
 }

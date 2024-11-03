@@ -19,7 +19,7 @@ export const Login = () => {
       email, password
     }
     try {
-      const response = await axios.post(" https://backend-medium.lostboybegining.workers.dev/api/v1/users/login", newUser, { withCredentials: true })
+      const response = await axios.post("https://backend-medium.lostboybegining.workers.dev/api/v1/users/login", newUser, { withCredentials: true })
       if (response.status === 200) {
         alert("Login Successfull!")
         navigate("/")

@@ -35,7 +35,6 @@ export const Blogs = () => {
             datePublished={blog.publishedAt}
             title={blog.title}
             content={blog.content}
-            imageURL="https://miro.medium.com/v2/resize:fit:1400/format:webp/1*oF53_AT1RJuKJ3glp1Ctkg@2x.jpeg"
           ></BlogCard>
         })}
       </div>

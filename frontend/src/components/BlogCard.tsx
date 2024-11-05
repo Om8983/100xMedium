@@ -1,6 +1,13 @@
 
+type Prop = {
+  username: string
+  title: string
+  content: string
+  datePublished: string
+  imageURL?: string
+}
 
-export const BlogCard = () => {
+export const BlogCard = ({ username, title, content, datePublished, imageURL }: Prop) => {
   return (
     <>
 
@@ -14,20 +21,20 @@ export const BlogCard = () => {
                 <img className=" h-[1.10rem] w-5" src="user.svg" alt="usersvg" />
               </div>
               {/* userName */}
-              <div className="pl-1 font-sans text-xs text-gray-700"></div>
+              <div className="pl-1 font-sans text-xs text-gray-700">{`${username.split(' ').length === 2 ? `${username.split(' ')[0]} ${username.split(' ')[1][0]}.` : username}`}</div>
               {/* small dot */}
               <div className="relative">
                 <span className="text-gray-400 absolute bottom-[0.19rem] left-[0.19rem] lg:left-[0.15rem] lg:bottom-1 ">.</span>
               </div>
               {/* date published */}
-              <div className="pl-2 text-xs text-gray-400"></div>
+              <div className="pl-2 text-xs text-gray-400">{datePublished}</div>
             </div>
 
             <div>
               {/* Blog title */}
-              <h1 className=" pt-5 text-xl lg:text-3xl  font-semibold "></h1>
+              <h1 className=" pt-5 text-xl lg:text-3xl  font-semibold ">{title}</h1>
               {/* part of blog content */}
-              <div className=" pt-4 text-xs lg:text-sm font-[myfont] "></div>
+              <div className=" pt-4 text-xs lg:text-sm font-[myfont] ">{`${content.slice(0, 150)}...`}</div>
             </div>
 
             <div className="flex pt-7">
@@ -40,7 +47,11 @@ export const BlogCard = () => {
 
           {/* blog image */}
           <div className="col-span-2 md:col-span-1 lg:col-span-1 bg-slate-200 self-center ml-2 w-[110px] h-[100px] md:w-[120px] lg:w-[170px] lg:h-[110px] lg:mt-8 ">
-            
+            <img src={
+              imageURL ?
+                imageURL :
+                "logo.svg"
+            } className="rounded-md shadow-xl " alt="blogImg" />
           </div>
         </div>
       </div>

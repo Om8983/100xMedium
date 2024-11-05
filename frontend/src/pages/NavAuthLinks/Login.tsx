@@ -1,10 +1,12 @@
 import { useNavigate } from "react-router-dom"
-import { Button } from "../components/Button"
-import { InputBox } from "../components/InputBox"
-import { Testimonial } from "../components/Testimonial"
+import { Button } from "../../components/Button"
+import { InputBox } from "../../components/InputBox"
+import { Testimonial } from "../../components/Testimonial"
 import axios, { AxiosError } from "axios"
 import { LoginSchema } from "@om_wadhi/common"
 import { useState } from "react"
+import { USERS_BACKEND_URL } from "../../config"
+
 export const Login = () => {
 
   const [email, setEmail] = useState<string>("")
@@ -19,10 +21,10 @@ export const Login = () => {
       email, password
     }
     try {
-      const response = await axios.post("https://backend-medium.lostboybegining.workers.dev/api/v1/users/login", newUser, { withCredentials: true })
+      const response = await axios.post(`${USERS_BACKEND_URL}/login`, newUser, { withCredentials: true })
       if (response.status === 200) {
         alert("Login Successfull!")
-        navigate("/")
+        navigate("/blog")
       }
     } catch (e) {
       if (e instanceof AxiosError) {

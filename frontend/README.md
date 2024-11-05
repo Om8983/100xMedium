@@ -48,3 +48,7 @@ export default tseslint.config({
   },
 })
 ```
+
+<!-- Features to add  -->
+
+<!-- 1. create /profile endpoint where user info will be there and also an option to update the user info. For this create a backend endpoint to update the user info. -->

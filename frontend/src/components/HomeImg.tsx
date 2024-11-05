@@ -1,6 +1,9 @@
-export const HomeImg = () => {
+type Prop = {
+    className : string
+}
+export const HomeImg = ({className} : Partial<Prop>) => {
     return (
-        <div className=" relative hidden lg:block self-center pl-28 ">
+        <div className={`${className} relative hidden lg:block self-center pl-28 `}>
             <div className="absolute bg-transparent border-2 border-black rounded-3xl border-t-0 border-l-0 lg:w-[450px] lg:h-[300px] ml-2 mt-2 "></div>
             <div className="w-[450px] h-[300px] bg-white bg-opacity-70 border-2 border-black rounded-3xl" >
                 <div className="flex justify-between  border-b-2 border-black pt-3">

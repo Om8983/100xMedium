@@ -1,30 +1,33 @@
+
+
 export const BlogCard = () => {
   return (
     <>
 
-      <div className=" border-b-2 p-3 lg:p-4 md:w-[600px] lg:w-[850px] lg:h-[250px] ">
+
+      <div className=" cursor-pointer border-2 rounded-2xl backdrop-blur-sm border-black p-3 max-w-[380px] lg:p-4 md:max-w-[600px] lg:max-w-[850px] lg:min-h-[250px] mt-5 shadow-xl">
         <div className=" grid grid-cols-5 md:grid-cols-3  lg:grid-cols-3">
           <div className=" col-span-3 md:col-span-2">
-            <div className="flex">
+            <div className="flex items-center">
               {/* user img */}
-              <div className=" rounded-full bg-gray-300 w-[1.15rem] h-[1.15rem] lg:w-5 lg:h-5 ">
+              <div className=" rounded-full w-[1.15rem] h-[1.15rem] lg:w-5 lg:h-5 ">
                 <img className=" h-[1.10rem] w-5" src="user.svg" alt="usersvg" />
               </div>
               {/* userName */}
-              <div className="pl-3 font-sans text-xs  text-gray-700">Om W.</div>
+              <div className="pl-1 font-sans text-xs text-gray-700"></div>
               {/* small dot */}
-                <div className="relative">
+              <div className="relative">
                 <span className="text-gray-400 absolute bottom-[0.19rem] left-[0.19rem] lg:left-[0.15rem] lg:bottom-1 ">.</span>
-                </div>
+              </div>
               {/* date published */}
-              <div className="pl-2 text-xs text-gray-400">  3 Feb 2024</div>
+              <div className="pl-2 text-xs text-gray-400"></div>
             </div>
 
             <div>
               {/* Blog title */}
-              <h1 className=" pt-5 text-xl lg:text-3xl  font-semibold ">Title of the blog</h1>
+              <h1 className=" pt-5 text-xl lg:text-3xl  font-semibold "></h1>
               {/* part of blog content */}
-              <div className=" pt-4 text-xs lg:text-sm font-serif ">Lorem ipsum dolor sit amet consectetur adipisicing elit. Error corporis consequuntur aliquam saepe, aspernatur sint quam at ratione! Nam ab unde aspernatur possimus aliquam repellendus...</div>
+              <div className=" pt-4 text-xs lg:text-sm font-[myfont] "></div>
             </div>
 
             <div className="flex pt-7">
@@ -36,10 +39,11 @@ export const BlogCard = () => {
           </div>
 
           {/* blog image */}
-          <div className="rounded-md col-span-2 md:col-span-1 lg:col-span-1 bg-slate-200 self-center ml-2 w-[110px] h-[100px] md:w-[120px] lg:w-[170px] lg:h-[120px] "></div>
+          <div className="col-span-2 md:col-span-1 lg:col-span-1 bg-slate-200 self-center ml-2 w-[110px] h-[100px] md:w-[120px] lg:w-[170px] lg:h-[110px] lg:mt-8 ">
+            
+          </div>
         </div>
       </div>
-      {/* <div className="  h-[0.1rem] bg-gray-200 w-full  lg:w-[850px] "></div> */}
     </>
   )
 }

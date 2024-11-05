@@ -1,19 +1,31 @@
 import { useNavigate } from "react-router-dom"
 import { NavLinks } from "../components/NavLinks"
 import { HomeImg } from "../components/HomeImg";
+import { useAuth } from "../hooks/authHook";
+import { useEffect } from "react";
 export const Home = () => {
     const navigate = useNavigate();
+    const { response } = useAuth();
+    console.log("response :: ",response);
+    
+    useEffect(() => {
+        if (response === true) {
+            navigate('/blog')
+        }
+    }, [navigate, response])
+
+    
     const handleClick = () => {
         navigate('/login')
     }
-    
+
     return (
         <>
-            <NavLinks />
+            <NavLinks className="fixed" />
             {/* div of grid having 2 cols on large screen, one side text other side image */}
-            <div className="lg:grid lg:grid-cols-2 w-screen h-screen bg-[url('../../public/paper.png')] md:bg-no-repeat md:bg-cover ">
+            <div className=" lg:grid lg:grid-cols-2 w-screen h-screen bg-[url('/paper.png')] md:bg-no-repeat md:bg-cover  ">
                 {/* div containing contents  */}
-                <div className=" pt-[16rem] md:pt-[19rem] lg:pt-[14.5rem] ml-4 lg:ml-[8rem] ">
+                <div className=" pt-[12rem] md:pt-[12rem] lg:pt-[14.5rem] ml-4 lg:ml-[8rem] ">
                     <h1 className="text-7xl md:text-8xl font-[boy] font-bold  ">Words That Matter!</h1>
                     <p className="text-gray-500 text-2xl font-[boy] ">Space where thoughts take shape and stories find meaning </p>
                     <div className=" pt-5 ">
@@ -21,7 +33,7 @@ export const Home = () => {
                     </div>
                 </div>
                 {/* image on large screen */}
-                <HomeImg/>
+                <HomeImg />
             </div>
         </>
     )

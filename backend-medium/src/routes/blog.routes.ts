@@ -47,14 +47,25 @@ router.post("/createBlog", createBlogSchema, async (c) => {
         data: {
             title: title,
             content: content,
-            author_id: authorId
+            author_id: authorId,
+            publishedAt : new Date().toDateString()
         },
         select: {
-            id: true
+            id: true,
+            title : true,
+            content : true,
+            author : {
+                select : {
+                    id : true,
+                    username : true,
+                    email : true
+                }
+            },
+            publishedAt : true 
         }
     })
     // on success message 
-    return c.json({ msg: "hello created", blogId: blog.id }, 200)
+    return c.json({ msg: "hello created", blogs: {blog} }, 200)
 })
 
 // to update
@@ -122,7 +133,20 @@ router.get("/bulk", async (c) => {
     }).$extends(withAccelerate());
 
     // getting all the blogs for home screen
-    const allBlog = await prisma.post.findMany({})
+    const allBlog = await prisma.post.findMany({
+        select : {
+            id : true,
+            title : true,
+            content: true,
+            publishedAt : true,
+            author : {
+                select : {
+                    id : true,
+                    username : true,
+                }
+            }
+        }
+    })
     
     if(allBlog.length === 0){
         return c.json({msg : "No blogs are posted"}, 200)

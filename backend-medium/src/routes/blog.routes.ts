@@ -118,6 +118,18 @@ router.get("/id/:id", async (c) => {
     const blog = await prisma.post.findUnique({
         where: {
             id : blogId
+        },
+        select: {
+            title : true,
+            content : true,
+            publishedAt : true,
+            author : {
+                select : {
+                    id : true, 
+                    username : true ,
+                    email : true
+                }
+            }
         }
     })
     // on success message 

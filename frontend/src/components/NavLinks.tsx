@@ -5,10 +5,10 @@ import { DropdownOpt } from "./dropdownOpt"
 
 // import { Dropdown } from "./Dropdown"
 type Prop = {
-    className: string
-    response : boolean
+    className?: string
+    response ?: boolean
 }
-export const NavLinks = ({ className, response }: Partial<Prop>) => {
+export const NavLinks = ({ className, response }: Prop) => {
     const [searchVal, setSearchVal] = useState<string>("")  // we are gonna define a hook that grabs the backend data object and returns the response cards with debouncing feature
 
 
@@ -34,62 +34,62 @@ export const NavLinks = ({ className, response }: Partial<Prop>) => {
     const handleclick = () => {
         setDrop(false)
     }
-    return (
-        <>
-            {scroll && <div className="h-[60px]"> </div>}
-            <div className={` ${scroll ? "fixed  backdrop-blur-lg" : "static"} top-0 left-0 w-full h-[60px] border-b-[0.5px] border-black z-50 ${className} `}>
-                <ul className="flex justify-around items-center ">
-                    {/* logo */}
-                    <div className="flex justify-center items-center">
-                        <li>
-                            <a href="/" className="border-none outline-none  ">
-                                <img src="logo.svg" alt="logo" className=" w-[120px] border-none outline-none " />
-                            </a>
-                        </li>
-                    </div>
-                    {/* search Bar */}
-                    {/* supposed to be rendered only on /blog page */}
-                    {window.location.pathname === "/blog" &&
-                        <div className="pt-2">
-                            <li>
-                                <input type="text" className=" w-[120px] lg:w-[400px] h-8 bg-white bg-opacity-40 shadow-md rounded-xl border-2 border-black placeholder:text-center outline-none lg:p-4 " onChange={(e) => setSearchVal(e.target.value)} placeholder="Search Here" />
-                            </li>
-                        </div>
-                    }
+return (
+<>
+{scroll && <div className="h-[60px]"> </div>}
+<div className={` ${scroll ? "fixed  backdrop-blur-lg" : "static"} top-0 left-0 w-full h-[60px] border-b-[0.5px] border-black z-50 ${className} `}>
+<ul className="flex justify-around items-center ">
+{/* logo */}
+<div className="flex justify-center items-center">
+<li>
+<a href="/" className="border-none outline-none  ">
+    <img src="/logo.svg" alt="logo" className=" w-[120px] border-none outline-none " />
+</a>
+</li>
+</div>
+{/* search Bar */}
+{/* supposed to be rendered only on /blog page */}
+{window.location.pathname === "/blog" &&
+<div className="pt-2">
+<li>
+    <input type="text" className=" w-[120px] lg:w-[400px] h-8 bg-transparent backdrop-blur-lg shadow-md rounded-xl border-2 border-black placeholder:text-center outline-none lg:p-4 " onChange={(e) => setSearchVal(e.target.value)} placeholder="Search Here" />
+</li>
+</div>
+}
 
-                    {
-                        response ?
-                            // user is logged in represent his image and on click show dropdown with logout button & profile button  
-                            <li>
-                                <Dropdown onClick={handleNavigation} />
-                                <div className="">
-                                    <div className={` ${drop ? "transition transform duration-150 ease-in-out scale-100 " : " opacity-0 scale-0"} absolute w-screen h-screen bg-transparent backdrop-blur-lg  right-0 top-0  `} >
-                                        <button className="absolute top-6 right-6 w-8 h-8 transition-transform hover:scale-110" onClick={handleclick}> <img src="dropclose.svg" alt="closesvg" /></button>
+{
+response ?
+// user is logged in represent his image and on click show dropdown with logout button & profile button  
+<li>
+    <Dropdown onClick={handleNavigation} />
+    <div className="">
+        <div className={` ${drop ? "transition transform duration-150 ease-in-out scale-100 " : " opacity-0 scale-0"} absolute w-screen h-screen bg-transparent backdrop-blur-lg  right-0 top-0  `} >
+            <button className="absolute top-6 right-6 w-8 h-8 transition-transform hover:scale-110" onClick={handleclick}> <img src="/dropclose.svg" alt="closesvg" /></button>
 
-                                        <div className="flex flex-col gap-3 justify-center items-center h-screen">
-                                            <DropdownOpt text="User Profile" svg="user.svg" />
-                                            <DropdownOpt text="Log Out" svg="logout.svg" />
-                                        </div>
-                                    </div>
-                                </div>
-                            </li>
-                            :
-                            <>
-                                {/* signup */}
-                                <div className="flex gap-10 pt-3">
-                                    <li>
-                                        <Link className="block text-center w-[80px] bg-white bg-opacity-40 text-black rounded-xl p-1 font-semibold outline-none transition ease-in-out delay-100 hover:scale-105 hover:bg-black hover:text-white border-2 border-black" to={"/signup"}>SignUp</Link>
-                                    </li>
-                                    {/* signin */}
-                                    <li>
-                                        <Link className=" block w-[80px] text-center p-1 bg-white bg-opacity-40 text-black rounded-xl font-semibold outline-none transition ease-in-out delay-100 hover:scale-105 hover:bg-black hover:text-white border-2 border-black " to={"/login"}>Log In</Link>
-                                    </li>
-                                </div>
-                            </>
-                    }
-                </ul>
+            <div className="flex flex-col gap-3 justify-center items-center h-screen">
+                <DropdownOpt text="User Profile" svg="/user.svg" />
+                <DropdownOpt text="Log Out" svg="/logout.svg" />
             </div>
-        </>
-    )
+        </div>
+    </div>
+</li>
+:
+<>
+    {/* signup */}
+    <div className="flex gap-10 pt-3">
+        <li>
+            <Link className="block text-center w-[80px] bg-white bg-opacity-40 text-black rounded-xl p-1 font-semibold outline-none transition ease-in-out delay-100 hover:scale-105 hover:bg-black hover:text-white border-2 border-black" to={"/signup"}>SignUp</Link>
+        </li>
+        {/* signin */}
+        <li>
+            <Link className=" block w-[80px] text-center p-1 bg-white bg-opacity-40 text-black rounded-xl font-semibold outline-none transition ease-in-out delay-100 hover:scale-105 hover:bg-black hover:text-white border-2 border-black " to={"/login"}>Log In</Link>
+        </li>
+    </div>
+</>
+}
+</ul>
+</div>
+</>
+)
 }
 

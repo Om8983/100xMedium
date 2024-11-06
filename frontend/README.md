@@ -52,3 +52,11 @@ export default tseslint.config({
 <!-- Features to add  -->
 
 <!-- 1. create /profile endpoint where user info will be there and also an option to update the user info. For this create a backend endpoint to update the user info. -->
+
+<!-- apply onclick functionality over the author image and name when particular blog post is opened and the name and image of the author is shown -->
+
+<!-- create a route for the users who visit the particular author profile and will be able to see their blog post... 
+A backend request must go out that fetches the users particular data and blogs written by that user and is rendered over the screen -->
+
+<!-- When a blog is posted the headings, titles, emphasized words must be bold and emphasized. -->
+

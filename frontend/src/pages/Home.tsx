@@ -6,7 +6,6 @@ import { useEffect } from "react";
 export const Home = () => {
     const navigate = useNavigate();
     const { response } = useAuth();
-    console.log("response :: ",response);
     
     useEffect(() => {
         if (response === true) {
@@ -18,10 +17,10 @@ export const Home = () => {
     const handleClick = () => {
         navigate('/login')
     }
-
+    
     return (
         <>
-            <NavLinks className="fixed" />
+            <NavLinks response={response} className="fixed" />
             {/* div of grid having 2 cols on large screen, one side text other side image */}
             <div className=" lg:grid lg:grid-cols-2 w-screen h-screen bg-[url('/paper.png')] md:bg-no-repeat md:bg-cover  ">
                 {/* div containing contents  */}

@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom"
 import { useAuth } from "../hooks/authHook"
 import { useEffect } from "react";
 import { useBulkBlog } from "../hooks/bulkBlog";
+import { BlogCardSkeleton } from "../components/BlogCardSkeleton";
 
 export const Blogs = () => {
   const navigate = useNavigate();
@@ -19,10 +20,20 @@ export const Blogs = () => {
   }, [response, navigate])
 
   // populating blogs
-  const { data } = useBulkBlog()
+  const { data, loading } = useBulkBlog()
 
+  // had to define skeleton here 
   if (authLoad === true) {
     return <p>Loading</p>
+  }
+
+  if (loading) {
+    return <div className=" flex flex-col gap-2 items-center w-screen min-h-screen bg-[url(/paper.png)] bg-fixed bg-no-repeat bg-cover  ">
+      <NavLinks></NavLinks>
+      <BlogCardSkeleton />
+      <BlogCardSkeleton />
+      <BlogCardSkeleton />
+    </div>
   }
   return (
     <>
@@ -35,8 +46,10 @@ export const Blogs = () => {
             datePublished={blog.publishedAt}
             title={blog.title}
             content={blog.content}
+            blogID={blog.id}
           ></BlogCard>
-        })}
+        })
+        }
       </div>
     </>
   )

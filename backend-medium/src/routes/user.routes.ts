@@ -4,7 +4,7 @@ import { PrismaClient } from "@prisma/client/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
 import { userLoginValidation, userSignupValidation } from "../zod/index.zod";
 import { decode, sign } from "hono/jwt";
-import { getCookie, setCookie } from "hono/cookie";
+import { deleteCookie, getCookie, setCookie } from "hono/cookie";
 type Bindings = {
   DATABASE_URL: string;
   ACCESSTOKEN_SECRET: string;
@@ -79,7 +79,17 @@ router.post("/signup", userSignupValidation, async (c) => {
   });
 
   // 5. send response
-  return c.json({ msg: "User created successfully!!" }, 200);
+  return c.json(
+    {
+      msg: "User created successfully!!",
+      user: {
+        id: user.id,
+        username: username,
+        email: email,
+      },
+    },
+    200
+  );
 });
 
 router.post("/login", userLoginValidation, async (c) => {
@@ -145,61 +155,107 @@ router.post("/login", userLoginValidation, async (c) => {
     sameSite: "None",
   });
   // return response
-  return c.json({ msg: "User login successfull!!" }, 200);
+  return c.json(
+    {
+      msg: "User login successfull!!",
+      user: {
+        username: user?.username,
+        email: user?.email,
+        id: user?.id,
+      },
+    },
+    200
+  );
 });
 
+router.post("/logout", async (c) => {
+  const accessToken = getCookie(c, "accessToken");
+  const refreshToken = getCookie(c, "refreshToken");
+
+  if (accessToken && refreshToken) {
+    deleteCookie(c, "accessToken", {
+      httpOnly: true,
+      secure: true,
+      sameSite: "None",
+    });
+    deleteCookie(c, "refreshToken", {
+      httpOnly: true,
+      secure: true,
+      sameSite: "None",
+    });
+  } else {
+    return c.json({ msg: "no cookies existed" });
+  }
+  return c.json({ msg: "success" });
+});
+
+
 router.get("/authCheck", async (c) => {
-  //initializing prisma instance
+  // Initializing Prisma Client
   const prisma = new PrismaClient({
     datasourceUrl: c.env.DATABASE_URL,
   }).$extends(withAccelerate());
 
-  // getting accessToken
-  const accessToken = getCookie(c, "accessToken");
-  
-  if (!accessToken) {
-    //getting refreshtoken
-    const refreshToken = getCookie(c, "refreshToken");
-    if (!refreshToken) {
-      return c.json({msg : "access Denied"}, 401);
+  try {
+    // Getting accessToken from cookies
+    const accessToken = getCookie(c, "accessToken");
+
+    if (!accessToken) {
+      // Getting refreshToken if accessToken is not found
+      const refreshToken = getCookie(c, "refreshToken");
+
+      if (!refreshToken) {
+        return c.json({ msg: "Access Denied" }, 401);
+      }
+
+      // Extracting user id from refreshToken
+      try {
+        const decoded = decode(refreshToken);
+        const { id } = decoded.payload as { id: string };
+
+        // Fetch user from the database
+        const user = await prisma.user.findUnique({
+          where: { id },
+          select: { id: true, username: true, email: true },
+        });
+
+        if (!user) {
+          return c.json({ msg: "User not found" }, 404);
+        }
+
+        // Generate a new access token
+        const newAccessToken = await sign(
+          {
+            id: user.id,
+            email: user.email,
+            username: user.username,
+            iat: Math.floor(Date.now() / 1000),
+            exp: Math.floor(Date.now() / 1000) + 60 * 15,
+          },
+          c.env.ACCESSTOKEN_SECRET
+        );
+
+        // Set the new access token in cookies
+        setCookie(c, "accessToken", newAccessToken, {
+          maxAge: 15 * 60,
+          secure: true,
+          sameSite: "None",
+          httpOnly: true,
+        });
+
+        return c.json({ msg: "Access approved" }, 200);
+      } catch (err) {
+        return c.json({ msg: "Invalid refresh token" }, 401);
+      }
     } else {
-      // extracting user id from refreshToken
-      const decoded = decode(refreshToken);
-      type decodedData = {
-        id: string;
-      };
-      const { id } = decoded.payload as decodedData;
-
-      const user = await prisma.user.findUnique({
-        where: {
-          id: id,
-        },
-        select: {
-          id: true,
-          username: true,
-          email: true,
-        },
-      });
-      const accessToken = await sign(
-        {
-          id: user?.id,
-          email: user?.email,
-          username: user?.username,
-          iat: Math.floor(Date.now() / 1000),
-          exp: Math.floor(Date.now() / 1000) + 60 * 15,
-        },
-        c.env.ACCESSTOKEN_SECRET
-      );
-      setCookie(c, "accessToken", accessToken, {
-        maxAge: 15 * 60,
-        secure: true,
-        sameSite: "None",
-        httpOnly: true,
-      });
-      return c.json({msg: "access approved"}, 200)
+      // If access token is valid, return success message
+      return c.json({ msg: "Access approved" }, 200);
     }
+  } catch (error) {
+    console.error("Authentication error:", error);
+    return c.json({ msg: "Internal Server Error" }, 500);
+  } finally {
+    await prisma.$disconnect(); // Disconnect Prisma to free resources
   }
-  return c.json({msg: "Auth Check Done"})
 });
-
 export default router;

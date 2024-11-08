@@ -6,11 +6,13 @@ import axios, { AxiosError } from "axios"
 import { SignUpSchema } from "@om_wadhi/common"
 import { useState } from "react"
 import { USERS_BACKEND_URL } from "../../config"
+import { useSetRecoilState } from "recoil"
+import { UserInfo } from "../../store/atoms/userInfoAtom"
 export const Signup = () => {
     const [username, setUsername] = useState<string>("")
     const [email, setEmail] = useState<string>("")
     const [password, SetPass] = useState<string>("")
-
+    const  sestUserInfo = useSetRecoilState(UserInfo)
     
     const navigate = useNavigate();
     //login redirect
@@ -25,7 +27,9 @@ export const Signup = () => {
         try {
             const response = await axios.post(`${USERS_BACKEND_URL}/signup`, newUser, { withCredentials: true })
             if (response.status === 200) {
+                const { user } = response.data
                 alert("User SignUp Successfull!!")
+                sestUserInfo({id : user.id, username : user.username, email: user.email})
                 navigate("/blog")
             }
         } catch (e) {

@@ -6,11 +6,14 @@ import axios, { AxiosError } from "axios"
 import { LoginSchema } from "@om_wadhi/common"
 import { useState } from "react"
 import { USERS_BACKEND_URL } from "../../config"
+import { useSetRecoilState } from "recoil"
+import { UserInfo } from "../../store/atoms/userInfoAtom"
 
 export const Login = () => {
 
   const [email, setEmail] = useState<string>("")
   const [password, SetPass] = useState<string>("")
+  const setUserInfo = useSetRecoilState(UserInfo);
 
   const navigate = useNavigate();
   const RedirectLogin = () => {
@@ -23,7 +26,13 @@ export const Login = () => {
     try {
       const response = await axios.post(`${USERS_BACKEND_URL}/login`, newUser, { withCredentials: true })
       if (response.status === 200) {
+        const {user} = response.data
         alert("Login Successfull!")
+        setUserInfo({
+          userId : user.id,
+          username : user.username,
+          email : user.email
+        })
         navigate("/blog")
       }
     } catch (e) {

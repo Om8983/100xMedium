@@ -18,9 +18,10 @@ export const Home = () => {
         navigate('/login')
     }
     
+    
     return (
         <>
-            <NavLinks response={response} className="fixed" />
+            <NavLinks  className="fixed" />
             {/* div of grid having 2 cols on large screen, one side text other side image */}
             <div className=" lg:grid lg:grid-cols-2 w-screen h-screen bg-[url('/paper.png')] md:bg-no-repeat md:bg-cover  ">
                 {/* div containing contents  */}

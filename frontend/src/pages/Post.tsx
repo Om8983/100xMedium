@@ -1,5 +1,5 @@
 import { useRecoilValueLoadable } from "recoil"
-import { BlogPostData } from "../store/atoms/UserAtom"
+import { BlogPostData } from "../store/atoms/blogFetchAtom"
 import { useNavigate, useParams } from "react-router-dom"
 import { useAuth } from "../hooks/authHook"
 import { useEffect } from "react"

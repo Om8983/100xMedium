@@ -5,6 +5,7 @@ import { Blogs } from './pages/Blogs'
 import { Home } from './pages/Home'
 import { Protected } from './pages/Protected'
 import { Post } from './pages/Post'
+import { UserProfile } from './pages/UserProfile'
 
 export const AppRoutes = () => {
   return (
@@ -18,6 +19,8 @@ export const AppRoutes = () => {
         <Route path='/signup' element={<Signup></Signup>}></Route>
         <Route path='/login' element={<Login></Login>}></Route>
 
+        {/* user profile */}
+        <Route path='/userProfile' element={<UserProfile/>}></Route>
       </Routes>
     </>
   )

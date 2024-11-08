@@ -8,6 +8,8 @@ import { BlogCardSkeleton } from "../components/BlogCardSkeleton";
 
 export const Blogs = () => {
   const navigate = useNavigate();
+  console.log("hi from blogs");
+  
 
   // user login true auth
   const { response, authLoad } = useAuth()
@@ -29,7 +31,7 @@ export const Blogs = () => {
 
   if (loading) {
     return <div className=" flex flex-col gap-2 items-center w-screen min-h-screen bg-[url(/paper.png)] bg-fixed bg-no-repeat bg-cover  ">
-      <NavLinks></NavLinks>
+      <NavLinks response={response}></NavLinks>
       <BlogCardSkeleton />
       <BlogCardSkeleton />
       <BlogCardSkeleton />

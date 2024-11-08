@@ -60,3 +60,5 @@ A backend request must go out that fetches the users particular data and blogs w
 
 <!-- When a blog is posted the headings, titles, emphasized words must be bold and emphasized. -->
 
+<!-- don't forget to add a "Create Blog" option on the 
+"/blogs" page  -->

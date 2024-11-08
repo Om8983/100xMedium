@@ -11,7 +11,7 @@ export const Blog = ({ username, title, content, publishedAt, imageURL }: Blog) 
         <div className="flex md:mx-10 lg:justify-center lg:mx-[15rem] ">
             <div className="flex flex-col justify-start mx-6 mt-12 gap-3">
                 {/* title of the blog */}
-                <div className=" text-3xl font-bold md:text-4xl lg:text-5xl  ">
+                <div className=" text-3xl font-bold md:text-4xl lg:text-5xl font-[boy]  ">
                     {title}
                 </div>
 
@@ -31,7 +31,7 @@ export const Blog = ({ username, title, content, publishedAt, imageURL }: Blog) 
                         <div className=" font-semibold text-md font-[myfont] lg:text-lg " >
                             {username}
                         </div>
-                        <div className="text-slate-500 text-sm font-[myfont] ">
+                        <div className="text-slate-500 text-sm font-[boy`] ">
                             {publishedAt}
                         </div>
                     </div>

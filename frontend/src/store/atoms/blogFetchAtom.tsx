@@ -15,8 +15,8 @@ export const BlogPostData =  selectorFamily({
             } catch (e) {
                 if (e instanceof AxiosError) {
                     if (e.response?.status === 401) {
-                        console.error("Unauthorized user", e)
-                        return
+                        console.error("Unauthorized user")
+                        return 
                     } else {
                         console.error("internal server error", e);
                         return

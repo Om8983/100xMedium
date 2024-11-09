@@ -14,7 +14,7 @@ export const InputBox = ({ type, id, placeholder, setValue }: Props) => {
     }
     return (
         <>
-            <input type={type} id={id} className={` w-[280px] h-[40px]  p-2 text-start ring-1 ring-gray-600 rounded-lg transition ease-in-out hover:scale-110 hover:ring-slate-600  outline-none`} placeholder={placeholder} onChange={handleOnChange}>
+            <input type={type} id={id} className={` w-[280px] h-[40px]  p-2 text-start ring-1 ring-gray-600 rounded-lg transition-transform delay-150 ease-in hover:scale-110 hover:ring-slate-600  outline-none`} placeholder={placeholder} onChange={handleOnChange}>
             </input>
         </>
     )

@@ -8,12 +8,13 @@ import { useState } from "react"
 import { USERS_BACKEND_URL } from "../../config"
 import { useSetRecoilState } from "recoil"
 import { UserInfo } from "../../store/atoms/userInfoAtom"
+import { GoogleBtn } from "../../components/GoogleBtn"
 export const Signup = () => {
     const [username, setUsername] = useState<string>("")
     const [email, setEmail] = useState<string>("")
     const [password, SetPass] = useState<string>("")
-    const  sestUserInfo = useSetRecoilState(UserInfo)
-    
+    const sestUserInfo = useSetRecoilState(UserInfo)
+
     const navigate = useNavigate();
     //login redirect
     const RedirectLogin = () => {
@@ -29,8 +30,8 @@ export const Signup = () => {
             if (response.status === 200) {
                 const { user } = response.data
                 alert("User SignUp Successfull!!")
-                sestUserInfo({id : user.id, username : user.username, email: user.email})
-                navigate("/blog")
+                sestUserInfo({ userId: user.id, username: user.username, email: user.email })
+                navigate("/protected")
             }
         } catch (e) {
             if (e instanceof AxiosError) {
@@ -46,11 +47,11 @@ export const Signup = () => {
     }
     return (
         <>
-            <div className="grid lg:grid-cols-2 h-screen gap-6 ">
-                <div className="flex flex-col justify-center items-center gap-3 ">
+            <div className=" grid lg:grid-cols-2 h-screen gap-6 bg-[#011e2b] ">
+                <div className="flex flex-col justify-center items-center gap-3">
                     <div className="flex flex-col gap-2 mb-7">
-                        <h1 className="text-center font-semibold text-4xl font-[myfont] ">Create An Account</h1>
-                        <p className="text-center text-gray-600 inline-block">Already have an account ?<span className=" pl-2 cursor-pointer text-gray-600 underline " onClick={() => RedirectLogin()} >Login
+                        <h1 className="text-center font-semibold text-4xl font-[myfont] text-white  ">Create An Account</h1>
+                        <p className="text-center text-gray-500 inline-block">Already have an account ?<span className=" pl-2 cursor-pointer text-gray-500 underline " onClick={() => RedirectLogin()} >Login
                             <img src="redirect.svg" alt="redirect btn" className="inline-block w-4 h-4 ml-1 pb-[2px]" />
                         </span> </p>
                     </div>
@@ -73,8 +74,18 @@ export const Signup = () => {
                     </div>
 
                     <Button onclick={handleSignup} className="mt-4" text="Sign Up"></Button>
+                    <div className="flex flex-col gap-8 mt-3">
+                        <div className="flex items-center">
+                            <span className="w-20 h-[0.05rem] bg-white " />
+                            <span className=" text-sm px-4 text-white "> OR</span>
+                            <span className="w-20 h-[0.05rem] bg-white " />
+                        </div>
+                        <div>
+                            <GoogleBtn accType="SignUp"/>
+                        </div>
+                    </div>
                 </div>
-                <Testimonial ></Testimonial>
+                <Testimonial className="hidden lg:block " ></Testimonial>
             </div>
         </>
     )

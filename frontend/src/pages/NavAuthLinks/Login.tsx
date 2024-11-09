@@ -8,6 +8,7 @@ import { useState } from "react"
 import { USERS_BACKEND_URL } from "../../config"
 import { useSetRecoilState } from "recoil"
 import { UserInfo } from "../../store/atoms/userInfoAtom"
+import { GoogleBtn } from "../../components/GoogleBtn"
 
 export const Login = () => {
 
@@ -26,14 +27,14 @@ export const Login = () => {
     try {
       const response = await axios.post(`${USERS_BACKEND_URL}/login`, newUser, { withCredentials: true })
       if (response.status === 200) {
-        const {user} = response.data
+        const { user } = response.data
         alert("Login Successfull!")
         setUserInfo({
-          userId : user.id,
-          username : user.username,
-          email : user.email
+          userId: user.id,
+          username: user.username,
+          email: user.email
         })
-        navigate("/blog")
+        navigate("/protected")
       }
     } catch (e) {
       if (e instanceof AxiosError) {
@@ -55,11 +56,11 @@ export const Login = () => {
   }
   return (
     <>
-      <div className="grid lg:grid-cols-2 h-screen gap-6 ">
+      <div className="grid lg:grid-cols-2 h-screen gap-6 bg-[#011e2b]">
         <div className="flex flex-col justify-center items-center gap-3 ">
           <div className="flex flex-col gap-2 mb-7">
-            <h1 className="text-center font-semibold text-4xl font-[myfont] ">Login To Your Account</h1>
-            <p className="text-center text-gray-600 inline-block">Don't have an account ?<span className=" pl-2 cursor-pointer text-gray-600  underline " onClick={() => RedirectLogin()} >Sign Up
+            <h1 className="text-center font-semibold text-4xl font-[myfont] text-white ">Login To Your Account</h1>
+            <p className="text-center text-gray-500 inline-block">Don't have an account ?<span className=" pl-2 cursor-pointer text-gray-500  underline " onClick={() => RedirectLogin()} >Sign Up
               <img src="redirect.svg" alt="redirect btn" className="inline-block w-4 h-4 ml-1 pb-[2px]" />
             </span> </p>
           </div>
@@ -78,8 +79,18 @@ export const Login = () => {
           </div>
 
           <Button onclick={handleSignup} className="mt-4" text="Login"></Button>
+          <div className="flex flex-col gap-8 mt-3">
+            <div className="flex items-center">
+              <span className="w-20 h-[0.05rem] bg-white " />
+              <span className=" text-sm px-4 text-white  "> OR</span>
+              <span className="w-20 h-[0.05rem] bg-white " />
+            </div>
+            <div>
+              <GoogleBtn accType="Login" />
+            </div>
+          </div>
         </div>
-        <Testimonial ></Testimonial>
+        <Testimonial className="hidden lg:block" ></Testimonial>
       </div>
     </>
   )

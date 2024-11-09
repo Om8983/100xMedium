@@ -1,23 +1,21 @@
 import { useNavigate } from "react-router-dom"
 import { NavLinks } from "../components/NavLinks"
 import { HomeImg } from "../components/HomeImg";
-import { useAuth } from "../hooks/authHook";
+import { useRecoilValue } from "recoil";
 import { useEffect } from "react";
+import { userLoginAtom } from "../store/atoms/userInfoAtom";
 export const Home = () => {
     const navigate = useNavigate();
-    const { response } = useAuth();
-    
-    useEffect(() => {
-        if (response === true) {
-            navigate('/blog')
-        }
-    }, [navigate, response])
+    // since i will store the respose from useAuth() in the recoil atom i will directly use the atom value here for validation rather defining a new useAuth()
 
-    
-    const handleClick = () => {
-        navigate('/login')
+   const userLogin = useRecoilValue(userLoginAtom)
+    if(userLogin === true){
+        navigate("/blog")
     }
     
+    const handleClick = () => {
+       navigate('/login')
+    }
     
     return (
         <>

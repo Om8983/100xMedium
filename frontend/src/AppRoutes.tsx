@@ -12,15 +12,17 @@ export const AppRoutes = () => {
     <>
       <Routes>
         <Route path='/' element={<Home></Home>}></Route>
-        <Route path='/blog' element={<Blogs />}></Route>
-        <Route path='/blog/id/:id' element={<Post />}></Route>
-        <Route path='/protectedRoute' element={<Protected />}></Route>
-        <Route path='/blog' element={<Blogs />}></Route>
         <Route path='/signup' element={<Signup></Signup>}></Route>
         <Route path='/login' element={<Login></Login>}></Route>
-
+        {/* protected Routes */}
+        <Route path='/protected' element={<Protected />}></Route>
+        {/* blog routes */}
+        <Route path='/blog' element={<Blogs />}></Route>
+        <Route path='/blog/id/:id' element={<Post />}></Route>
         {/* user profile */}
-        <Route path='/userProfile' element={<UserProfile/>}></Route>
+        <Route path='/userProfile' element={<UserProfile />}></Route>
+
+
       </Routes>
     </>
   )

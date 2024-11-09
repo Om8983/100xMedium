@@ -3,17 +3,17 @@ import { Link, useNavigate } from "react-router-dom"
 import { Dropdown } from "./Dropdown"
 import { DropdownOpt } from "./dropdownOpt"
 import axios, { AxiosError } from "axios"
-import { useSetRecoilState } from "recoil"
-import { UserInfo } from "../store/atoms/userInfoAtom"
+import { useRecoilValue, useSetRecoilState } from "recoil"
+import {  UserInfo, userLoginAtom } from "../store/atoms/userInfoAtom"
 import { USERS_BACKEND_URL } from "../config"
 
 // import { Dropdown } from "./Dropdown"
 type Prop = {
     className?: string
-    response?: boolean
 }
-export const NavLinks = ({ className, response }: Prop) => {
+export const NavLinks = ({ className }: Prop) => {
     const navigate = useNavigate();
+    const userLogin = useRecoilValue(userLoginAtom)
 
     const [searchVal, setSearchVal] = useState<string>("")  // we are gonna define a hook that grabs the backend data object and returns the response cards with debouncing feature
     const setUserInfo = useSetRecoilState(UserInfo)
@@ -52,12 +52,11 @@ export const NavLinks = ({ className, response }: Prop) => {
             await axios.post(`${USERS_BACKEND_URL}/logout`, {}, { withCredentials: true })
             setUserInfo({})
             alert("User LogOut Success!!")
-            navigate('/')
+            navigate("/")
             return;
         } catch (e) {
             if (e instanceof AxiosError) {
                 if (e.response?.status === 500) {
-                    console.log("internal server error");
                     setUserInfo({})
                     navigate("/")
                     return;
@@ -89,7 +88,7 @@ export const NavLinks = ({ className, response }: Prop) => {
                     }
 
                     {
-                        response ?
+                        userLogin ?
                             // user is logged in represent his image and on click show dropdown with logout button & profile button  
                             <li>
                                 <Dropdown onClick={handleNavigation} />
@@ -107,7 +106,7 @@ export const NavLinks = ({ className, response }: Prop) => {
                             :
                             <>
                                 {/* signup */}
-                                <div className="flex gap-10 pt-3">
+                                <div className="flex gap-5 pt-3">
                                     <li>
                                         <Link className="block text-center w-[80px] bg-white bg-opacity-40 text-black rounded-xl p-1 font-semibold outline-none transition ease-in-out delay-100 hover:scale-105 hover:bg-black hover:text-white border-2 border-black" to={"/signup"}>SignUp</Link>
                                     </li>

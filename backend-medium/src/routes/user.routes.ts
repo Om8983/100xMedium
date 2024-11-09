@@ -5,6 +5,7 @@ import { withAccelerate } from "@prisma/extension-accelerate";
 import { userLoginValidation, userSignupValidation } from "../zod/index.zod";
 import { decode, sign } from "hono/jwt";
 import { deleteCookie, getCookie, setCookie } from "hono/cookie";
+import { Cookies } from "../controllers/cookies";
 type Bindings = {
   DATABASE_URL: string;
   ACCESSTOKEN_SECRET: string;
@@ -45,37 +46,16 @@ router.post("/signup", userSignupValidation, async (c) => {
     select: { id: true, username: true, email: true },
   });
 
-  // 4. create acccess and refresh token and setCookie
-  const accessToken = await sign(
-    {
-      id: user.id,
-      email: user.email,
-      username: user.username,
-      iat: Math.floor(Date.now() / 1000),
-      exp: Math.floor(Date.now() / 1000) + 60 * 15,
+  //4. promisified set cookies function which needs the user as a parameter
+  await Cookies({
+    c: c,
+    ACCESSTOKEN_SECRET: c.env.ACCESSTOKEN_SECRET,
+    REFRESHTOKEN_SECRET: c.env.REFRESHTOKEN_SECRET,
+    userData: {
+      username: user?.username!,
+      email: user?.email!,
+      id: user?.id!,
     },
-    c.env.ACCESSTOKEN_SECRET
-  );
-  const refreshToken = await sign(
-    {
-      id: user.id,
-      iat: Math.floor(Date.now() / 1000),
-      exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24,
-    },
-    c.env.REFRESHTOKEN_SECRET
-  );
-
-  setCookie(c, "accessToken", accessToken, {
-    maxAge: 15 * 60,
-    secure: true,
-    sameSite: "None",
-    httpOnly: true,
-  });
-  setCookie(c, "refreshToken", refreshToken, {
-    maxAge: 24 * 60 * 60,
-    secure: true,
-    sameSite: "None",
-    httpOnly: true,
   });
 
   // 5. send response
@@ -122,38 +102,19 @@ router.post("/login", userLoginValidation, async (c) => {
   if (!valid) {
     return c.json({ msg: "Incorrect Password" }, 401);
   }
-  // create access and refresh token and setCookie
-  const accessToken = await sign(
-    {
-      id: user?.id,
-      email: user?.email,
-      username: user?.username,
-      iat: Math.floor(Date.now() / 1000),
-      exp: Math.floor(Date.now() / 1000) + 60 * 15,
-    },
-    c.env.ACCESSTOKEN_SECRET
-  );
-  const refreshToken = await sign(
-    {
-      id: user?.id,
-      iat: Math.floor(Date.now() / 1000),
-      exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24,
-    },
-    c.env.REFRESHTOKEN_SECRET
-  );
 
-  setCookie(c, "accessToken", accessToken, {
-    maxAge: 15 * 60,
-    secure: true,
-    sameSite: "None",
-    httpOnly: true,
+  // promisified set cookies function which needs the user as a parameter
+  await Cookies({
+    c: c,
+    ACCESSTOKEN_SECRET: c.env.ACCESSTOKEN_SECRET,
+    REFRESHTOKEN_SECRET: c.env.REFRESHTOKEN_SECRET,
+    userData: {
+      username: user?.username!,
+      email: user?.email!,
+      id: user?.id!,
+    },
   });
-  setCookie(c, "refreshToken", refreshToken, {
-    maxAge: 24 * 60 * 60,
-    httpOnly: true,
-    secure: true,
-    sameSite: "None",
-  });
+
   // return response
   return c.json(
     {
@@ -188,7 +149,6 @@ router.post("/logout", async (c) => {
   }
   return c.json({ msg: "success" });
 });
-
 
 router.get("/authCheck", async (c) => {
   // Initializing Prisma Client
@@ -243,13 +203,15 @@ router.get("/authCheck", async (c) => {
           httpOnly: true,
         });
 
-        return c.json({ msg: "Access approved" }, 200);
+        return c.json({ msg: "Access approved", user : user }, 200);
       } catch (err) {
         return c.json({ msg: "Invalid refresh token" }, 401);
       }
     } else {
+      const decodedData = decode(accessToken)
+      const  { username, email, id  } = decodedData.payload
       // If access token is valid, return success message
-      return c.json({ msg: "Access approved" }, 200);
+      return c.json({ msg: "Access approved", user : {username , email , id} }, 200);
     }
   } catch (error) {
     console.error("Authentication error:", error);

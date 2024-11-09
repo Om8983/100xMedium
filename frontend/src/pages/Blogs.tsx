@@ -5,7 +5,7 @@ import { BlogCardSkeleton } from "../components/BlogCardSkeleton";
 import { useRecoilValue } from "recoil";
 import { userLoginAtom } from "../store/atoms/userInfoAtom";
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { UnAuth } from "../components/UnAuth";
 
 export const Blogs = () => {
   const userLogin = useRecoilValue(userLoginAtom)
@@ -37,9 +37,6 @@ export const Blogs = () => {
       }
     </div>
   } else {
-    useEffect(() => {
-      alert("User Session Ended! Please Re-Login")
-      navigate("/login")
-    },[])
+   return  <UnAuth/>
   }
 }

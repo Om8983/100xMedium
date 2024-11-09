@@ -4,7 +4,6 @@ import { useNavigate, useParams } from "react-router-dom"
 import { BlogPostSkeleton } from "../components/BlogPostSkeleton"
 import { NavLinks } from "../components/NavLinks"
 import { Blog } from "../components/Blog"
-import { useEffect } from "react"
 
 export const Post = () => {
 

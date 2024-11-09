@@ -2,24 +2,28 @@ import { useNavigate } from "react-router-dom"
 import { NavLinks } from "../components/NavLinks"
 import { HomeImg } from "../components/HomeImg";
 import { useRecoilValue } from "recoil";
-import { useEffect } from "react";
 import { userLoginAtom } from "../store/atoms/userInfoAtom";
+import { useEffect } from "react";
 export const Home = () => {
     const navigate = useNavigate();
     // since i will store the respose from useAuth() in the recoil atom i will directly use the atom value here for validation rather defining a new useAuth()
 
-   const userLogin = useRecoilValue(userLoginAtom)
-    if(userLogin === true){
-        navigate("/blog")
-    }
-    
+    const userLogin = useRecoilValue(userLoginAtom)
+    console.log(userLogin);
+
+    useEffect(() => {
+        if (userLogin === true) {
+            navigate("/protected")
+        }
+    }, [userLogin, navigate])
+
     const handleClick = () => {
-       navigate('/login')
+        navigate('/login')
     }
-    
+
     return (
         <>
-            <NavLinks  className="fixed" />
+            <NavLinks className="fixed" />
             {/* div of grid having 2 cols on large screen, one side text other side image */}
             <div className=" lg:grid lg:grid-cols-2 w-screen h-screen bg-[url('/paper.png')] md:bg-no-repeat md:bg-cover  ">
                 {/* div containing contents  */}

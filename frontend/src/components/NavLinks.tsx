@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom"
 import { Dropdown } from "./Dropdown"
 import { DropdownOpt } from "./dropdownOpt"
 import axios, { AxiosError } from "axios"
-import { useRecoilValue, useSetRecoilState } from "recoil"
+import { useRecoilState, useSetRecoilState } from "recoil"
 import {  UserInfo, userLoginAtom } from "../store/atoms/userInfoAtom"
 import { USERS_BACKEND_URL } from "../config"
 
@@ -13,7 +13,7 @@ type Prop = {
 }
 export const NavLinks = ({ className }: Prop) => {
     const navigate = useNavigate();
-    const userLogin = useRecoilValue(userLoginAtom)
+    const [userLogin, setUserLogin] = useRecoilState(userLoginAtom)
 
     const [searchVal, setSearchVal] = useState<string>("")  // we are gonna define a hook that grabs the backend data object and returns the response cards with debouncing feature
     const setUserInfo = useSetRecoilState(UserInfo)
@@ -51,6 +51,7 @@ export const NavLinks = ({ className }: Prop) => {
         try {
             await axios.post(`${USERS_BACKEND_URL}/logout`, {}, { withCredentials: true })
             setUserInfo({})
+            setUserLogin(false)
             alert("User LogOut Success!!")
             navigate("/")
             return;

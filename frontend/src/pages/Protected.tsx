@@ -2,20 +2,22 @@ import { useNavigate } from "react-router-dom"
 import { useAuth } from "../hooks/authHook";
 import { useEffect } from "react";
 
-export const Protected =   () => {
+export const Protected = () => {
     const navigate = useNavigate();
-    const {response, loading} =  useAuth()  // custom hook for authentication
+    const { response, loading } = useAuth()  // custom hook for authentication
 
     useEffect(() => {
-        if(loading === false){
+        if (loading === false) {
             if (response === true) {
                 navigate("/blog")
+                return
             } else {
                 alert("Unauthorized User");
                 navigate("/login")
+                return
             }
         }
-    }, [ response, navigate])
+    }, [response, navigate])
 
     if (loading === true) {
         return (

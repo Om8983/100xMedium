@@ -46,8 +46,6 @@ router.get("/redirect", async (c) => {
   try {
     const tokenResponse = await axios.post(token_url, params);
     const tokens = tokenResponse.data.id_token;
-    console.log(tokens);
-
     type UserData = {
       sub: string;
       email: string;
@@ -75,6 +73,7 @@ router.get("/redirect", async (c) => {
           email: true,
           username: true,
           id: true,
+          verified : true
         },
       });
 
@@ -87,7 +86,8 @@ router.get("/redirect", async (c) => {
         userData : {
           username : newUser.username,
           email : newUser.email,
-          id : newUser.id
+          id : newUser.id,
+          verified : newUser.verified!
         }
       })
       return c.json({ msg: "User Signup Success" }, 200);
@@ -102,7 +102,8 @@ router.get("/redirect", async (c) => {
         userData : {
           username : user.username,
           email : user.email,
-          id : user.id
+          id : user.id,
+          verified : user.verified!
         }
       })
       c.json({ msg: "User Login Success" }, 200);

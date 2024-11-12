@@ -6,6 +6,7 @@ type User = {
   id: string;
   email: string;
   username: string;
+  verified : boolean
 };
 
 type Props = {
@@ -21,7 +22,6 @@ export const Cookies = async ({
   userData,
 }: Props) => {
   try {
-    console.log(ACCESSTOKEN_SECRET, REFRESHTOKEN_SECRET, userData);
 
     // create access and refresh token and setCookie
     const accessToken = await sign(
@@ -29,6 +29,7 @@ export const Cookies = async ({
         id: userData?.id,
         email: userData?.email,
         username: userData?.username,
+        verified : userData?.verified,
         iat: Math.floor(Date.now() / 1000),
         exp: Math.floor(Date.now() / 1000) + 60 * 15,
       },

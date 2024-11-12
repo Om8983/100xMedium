@@ -3,9 +3,9 @@ import { Link, useNavigate } from "react-router-dom"
 import { Dropdown } from "./Dropdown"
 import { DropdownOpt } from "./dropdownOpt"
 import axios, { AxiosError } from "axios"
-import { useRecoilState, useSetRecoilState } from "recoil"
-import {  UserInfo, userLoginAtom } from "../store/atoms/userInfoAtom"
+import { useRecoilState } from "recoil"
 import { USERS_BACKEND_URL } from "../config"
+import { userLoginAtom } from "../store/atoms/userInfoAtom"
 
 // import { Dropdown } from "./Dropdown"
 type Prop = {
@@ -16,7 +16,6 @@ export const NavLinks = ({ className }: Prop) => {
     const [userLogin, setUserLogin] = useRecoilState(userLoginAtom)
 
     const [searchVal, setSearchVal] = useState<string>("")  // we are gonna define a hook that grabs the backend data object and returns the response cards with debouncing feature
-    const setUserInfo = useSetRecoilState(UserInfo)
 
     const [drop, setDrop] = useState(false)
     // defining window.scrollY directly won't affect in the className. It is a dynamic event so you have to use useEffect() to track the changes 
@@ -50,7 +49,6 @@ export const NavLinks = ({ className }: Prop) => {
     const handleLogout = async () => {
         try {
             await axios.post(`${USERS_BACKEND_URL}/logout`, {}, { withCredentials: true })
-            setUserInfo({})
             setUserLogin(false)
             alert("User LogOut Success!!")
             navigate("/")
@@ -58,7 +56,6 @@ export const NavLinks = ({ className }: Prop) => {
         } catch (e) {
             if (e instanceof AxiosError) {
                 if (e.response?.status === 500) {
-                    setUserInfo({})
                     navigate("/")
                     return;
                 }

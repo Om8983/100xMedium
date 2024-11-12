@@ -9,7 +9,6 @@ export const Home = () => {
     // since i will store the respose from useAuth() in the recoil atom i will directly use the atom value here for validation rather defining a new useAuth()
 
     const userLogin = useRecoilValue(userLoginAtom)
-    console.log(userLogin);
 
     useEffect(() => {
         if (userLogin === true) {
@@ -27,7 +26,7 @@ export const Home = () => {
             {/* div of grid having 2 cols on large screen, one side text other side image */}
             <div className=" lg:grid lg:grid-cols-2 w-screen h-screen bg-[url('/paper.png')] md:bg-no-repeat md:bg-cover  ">
                 {/* div containing contents  */}
-                <div className=" pt-[12rem] md:pt-[12rem] lg:pt-[14.5rem] ml-4 lg:ml-[8rem] ">
+                <div className=" pt-[12rem] md:pt-[12rem] lg:pt-[14.5rem] ml-4 lg:ml-[8rem]">
                     <h1 className="text-7xl md:text-8xl font-[boy] font-bold  ">Words That Matter!</h1>
                     <p className="text-gray-500 text-2xl font-[boy] ">Space where thoughts take shape and stories find meaning </p>
                     <div className=" pt-5 ">

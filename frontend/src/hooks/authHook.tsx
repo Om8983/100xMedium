@@ -2,13 +2,15 @@ import axios, { AxiosError } from "axios";
 import { useEffect, useState } from "react";
 import { USERS_BACKEND_URL } from "../config";
 import {  useSetRecoilState } from "recoil";
-import { UserInfo, userLoginAtom } from "../store/atoms/userInfoAtom";
+import { userId, userLoginAtom } from "../store/atoms/userInfoAtom";
+import { verifiedEmail } from "../store/atoms/otpAtoms";
 
 export const useAuth = () => {
     const [response, setResponse] = useState<Boolean>(false)
     const [loading, setLoading] = useState<Boolean>(true)
+    const setUserID  = useSetRecoilState(userId)
+    const setVerify = useSetRecoilState(verifiedEmail)
     const setUserLogin = useSetRecoilState(userLoginAtom)
-    const setUserData = useSetRecoilState(UserInfo)
     useEffect(() => {
         (async () => {
             try {
@@ -16,10 +18,11 @@ export const useAuth = () => {
                 let res = await axios.get(`${USERS_BACKEND_URL}/authCheck`,{withCredentials : true})
                 
                 if (res.status == 200) {
-                    const { user } = res.data;                    
+                    const { id, verified }  = res.data.user;
                     setResponse(true)  // by default false
+                    setUserID(id)
+                    setVerify(verified)
                     setUserLogin(true) // by default false
-                    setUserData(user)
                     setLoading(false)  // by default true
                 }
             } catch (e) {

@@ -13,19 +13,22 @@ export const userLoginSchema = z.object({
   password: z.string().min(8),
 });
 
+export const userInfoUpdateSchema = z.object({
+  username: z.string().optional(),
+  email: z.string().email().optional(),
+});
 
-// blog schemas 
+// blog schemas
 export const blogCreateSchema = z.object({
-  title : z.string(),
-  content : z.string()
+  title: z.string(),
+  content: z.string(),
 });
 
 export const blogUpdateSchema = z.object({
-  blogId : z.string().optional(),
-  title : z.string().optional(),
-  content : z.string().optional()
+  blogId: z.string().optional(),
+  title: z.string().optional(),
+  content: z.string().optional(),
 });
-
 
 // vsriable that will be used by the frontend while passing data
 export type SignUpSchema = z.infer<typeof userSignUpSchema>;

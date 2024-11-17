@@ -4,6 +4,7 @@ import {
   userLoginSchema,
   blogCreateSchema,
   blogUpdateSchema,
+  userInfoUpdateSchema,
 } from "@om_wadhi/common";
 export const userSignupValidation = zValidator(
   "json",
@@ -23,6 +24,12 @@ export const userLoginValidation = zValidator(
     }
   }
 );
+
+export const userUpdateSchema = zValidator("json", userInfoUpdateSchema, (result, c) => {
+  if(!result.success){
+    return c.json({msg : "Invalid User Information"}, 403)
+  }
+})
 
 export const createBlogSchema = zValidator(
   "json",

@@ -2,7 +2,11 @@ import { Hono } from "hono";
 import bcrypt from "bcryptjs";
 import { PrismaClient } from "@prisma/client/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
-import { userLoginValidation, userSignupValidation } from "../zod/index.zod";
+import {
+  userLoginValidation,
+  userSignupValidation,
+  userUpdateSchema,
+} from "../zod/index.zod";
 import { decode, sign, verify } from "hono/jwt";
 import { deleteCookie, getCookie, setCookie } from "hono/cookie";
 import { Cookies } from "../controllers/cookies";
@@ -227,6 +231,40 @@ router.get("/details", async (c) => {
   }
 });
 
+router.get("/myblogs", async (c) => {
+  try {
+    // Initializing Prisma Client
+    const prisma = new PrismaClient({
+      datasourceUrl: c.env.DATABASE_URL,
+    }).$extends(withAccelerate());
+    
+    //see if access token is present
+    const accessToken = getCookie(c, "accessToken");
+    
+    if (!accessToken) {
+      return c.json({ msg: "token not received" }, 401);
+    }
+    const decodedData = await verify(accessToken, c.env.ACCESSTOKEN_SECRET);
+    
+    const id =  c.req.query("id")
+    
+    // search user and get blog posts
+    const userBlog = await prisma.user.findFirst({
+      where: {
+        id: id as string,
+      },
+      select: {
+        username : true,
+        posts: true,
+      },
+    });
+    
+    // return success with blog posts
+    return c.json({ msg: "success", user: {username : userBlog?.username, post: userBlog?.posts} }, 200);
+  } catch (e) {
+    return c.json({ msg: "Something Went Wrong" }, 500);
+  }
+});
 router.get("/authCheck", async (c) => {
   // Initializing Prisma Client
   const prisma = new PrismaClient({
@@ -280,8 +318,11 @@ router.get("/authCheck", async (c) => {
       const decodedData = await verify(accessToken, c.env.ACCESSTOKEN_SECRET);
       const { id, verified } = decodedData;
       // If access token is valid, return success message
-      return c.json({ msg: "Access approved", user: { id : id,verified: verified  } }, 200);
-    }c
+      return c.json(
+        { msg: "Access approved", user: { id: id, verified: verified } },
+        200
+      );
+    }
   } catch (error) {
     console.error("Authentication error:", error);
     return c.json({ msg: "Internal Server Error" }, 500);

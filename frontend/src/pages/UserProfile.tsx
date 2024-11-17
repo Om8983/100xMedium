@@ -1,11 +1,11 @@
 import { useRecoilState, useRecoilValueLoadable, useSetRecoilState } from "recoil"
 import { UserProfileCard } from "../components/UserProfileCard"
-import { userId, userLoginAtom } from "../store/atoms/userInfoAtom"
+import { userId, userLoginAtom, verifiedEmail } from "../store/atoms/userInfoAtom"
 import { USERS_BACKEND_URL } from "../config"
 import axios, { AxiosError } from "axios"
 import { useNavigate } from "react-router-dom"
 import { UnAuth } from "../components/UnAuth"
-import { token, verifiedEmail } from "../store/atoms/otpAtoms"
+import { token } from "../store/atoms/otpAtoms"
 import { useState } from "react"
 import { userProfile } from "../store/atoms/userData"
 
@@ -27,7 +27,7 @@ export const UserProfile = () => {
         try {
             await axios.post(`${USERS_BACKEND_URL}/logout`, {}, { withCredentials: true })
             setUserLogin(false)
-            setUserID("")
+            // setUserID("")
             setVerify(false)
             alert("User LogOut Success!!")
             navigate("/")
@@ -73,16 +73,10 @@ export const UserProfile = () => {
                     alert("Invalid OTP")
                 } else {
                     alert("Internal Server Error")
-                }
+                } 
             }
         }
     }
-
-    // setting verification status received from backend 
-    // if (userData.state === "hasValue") {
-    //     const { user } = userData.contents
-    //     setVerify(user.verified)
-    // }
 
     if (userData.state === "loading") {
         return <p>loading,...</p>

@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { USERS_BACKEND_URL } from "../config";
 import {  useSetRecoilState } from "recoil";
 import { userId, userLoginAtom } from "../store/atoms/userInfoAtom";
-import { verifiedEmail } from "../store/atoms/otpAtoms";
+import { verifiedEmail } from "../store/atoms/userInfoAtom";
 
 export const useAuth = () => {
     const [response, setResponse] = useState<Boolean>(false)

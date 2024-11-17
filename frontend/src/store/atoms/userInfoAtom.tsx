@@ -14,3 +14,10 @@ export const userLoginAtom = atom({
     default: false,
     effects_UNSTABLE: [persistAtom]
 })
+
+
+export const verifiedEmail = atom({
+    key: "verified",
+    default: false,
+    effects_UNSTABLE: [persistAtom]
+})

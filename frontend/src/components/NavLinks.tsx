@@ -3,9 +3,9 @@ import { Link, useNavigate } from "react-router-dom"
 import { Dropdown } from "./Dropdown"
 import { DropdownOpt } from "./dropdownOpt"
 import axios, { AxiosError } from "axios"
-import { useRecoilState } from "recoil"
+import { useRecoilState, useSetRecoilState } from "recoil"
 import { USERS_BACKEND_URL } from "../config"
-import { userLoginAtom } from "../store/atoms/userInfoAtom"
+import { userId, userLoginAtom } from "../store/atoms/userInfoAtom"
 
 // import { Dropdown } from "./Dropdown"
 type Prop = {
@@ -14,7 +14,7 @@ type Prop = {
 export const NavLinks = ({ className }: Prop) => {
     const navigate = useNavigate();
     const [userLogin, setUserLogin] = useRecoilState(userLoginAtom)
-
+    const setUserID = useSetRecoilState(userId)
     const [searchVal, setSearchVal] = useState<string>("")  // we are gonna define a hook that grabs the backend data object and returns the response cards with debouncing feature
 
     const [drop, setDrop] = useState(false)
@@ -49,6 +49,7 @@ export const NavLinks = ({ className }: Prop) => {
     const handleLogout = async () => {
         try {
             await axios.post(`${USERS_BACKEND_URL}/logout`, {}, { withCredentials: true })
+            // setUserID("")
             setUserLogin(false)
             alert("User LogOut Success!!")
             navigate("/")
@@ -96,6 +97,7 @@ export const NavLinks = ({ className }: Prop) => {
 
                                         <div className="flex flex-col gap-3 justify-center items-center h-screen">
                                             <DropdownOpt onclick={() => userProfile()} text="User Profile" svg="/user.svg" />
+                                            <DropdownOpt onclick={() => navigate("/myblogs")}  text="My Blogs" svg="/blog.svg" />
                                             <DropdownOpt onclick={handleLogout} text="Log Out" svg="/logout.svg" />
                                         </div>
                                     </div>

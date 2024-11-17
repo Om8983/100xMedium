@@ -35,3 +35,4 @@ export type SignUpSchema = z.infer<typeof userSignUpSchema>;
 export type LoginSchema = z.infer<typeof userLoginSchema>;
 export type BlogCreate = z.infer<typeof blogCreateSchema>;
 export type BlogUpdate = z.infer<typeof blogUpdateSchema>;
+export type UserUpdate = z.infer<typeof userInfoUpdateSchema>;

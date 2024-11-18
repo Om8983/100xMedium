@@ -33,7 +33,7 @@ const CountDown = (() => {
                     <Counter setValue={setOver} seconds={119} />
                     :
                     <div className=''>
-                        <button className="bg-green-600 rounded-lg text-white w-24 h-6 font-medium text-xs p-1" onClick={resetTimer}>Resend OTP</button>
+                        <button className="bg-orange-200 rounded-md w-[7rem] min-h-6 p-1 text-center font-medium text-sm font-serif lg:text-base lg:mt-3 " onClick={resetTimer}>Resend OTP</button>
                     </div>
             }
         </>

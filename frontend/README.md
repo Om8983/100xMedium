@@ -18,11 +18,11 @@ export default tseslint.config({
   languageOptions: {
     // other options...
     parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
+      project: ["./tsconfig.node.json", "./tsconfig.app.json"],
       tsconfigRootDir: import.meta.dirname,
     },
   },
-})
+});
 ```
 
 - Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
@@ -31,11 +31,11 @@ export default tseslint.config({
 
 ```js
 // eslint.config.js
-import react from 'eslint-plugin-react'
+import react from "eslint-plugin-react";
 
 export default tseslint.config({
   // Set the react version
-  settings: { react: { version: '18.3' } },
+  settings: { react: { version: "18.3" } },
   plugins: {
     // Add the react plugin
     react,
@@ -44,9 +44,9 @@ export default tseslint.config({
     // other rules...
     // Enable its recommended rules
     ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
+    ...react.configs["jsx-runtime"].rules,
   },
-})
+});
 ```
 
 <!-- Features to add  -->
@@ -55,10 +55,28 @@ export default tseslint.config({
 
 <!-- apply onclick functionality over the author image and name when particular blog post is opened and the name and image of the author is shown -->
 
-<!-- create a route for the users who visit the particular author profile and will be able to see their blog post... 
+<!-- create a route for the users who visit the particular author profile and will be able to see their blog post...
 A backend request must go out that fetches the users particular data and blogs written by that user and is rendered over the screen -->
 
 <!-- When a blog is posted the headings, titles, emphasized words must be bold and emphasized. -->
 
-<!-- don't forget to add a "Create Blog" option on the 
+<!-- don't forget to add a "Create Blog" option on the
 "/blogs" page  -->
+
+
+
+<!-- Explanation to update profile
+-> firstly on Backend I made sure that even if from frontend the input is empty, don't include the empty value field and update the user with rest of the fields
+-> On frontend i had created this functional state component ::
+
+```
+ const handleChange = (field: string, changedVal: string) => {
+        setChanges((prev) => ({
+            ...prev, [field]: changedVal
+        }))
+    }
+```
+which onChange call set the "changes" object to include the changed username and the changed email if any.
+-> added a "cancel" btn in order if user doesn't want to edit or even if he tried to do so then also no backend call will be sent 
+
+-> the whole point of adding the "fieldUpdate" state was to avoid the controlled and uncontrolled changes in react. If you want to know search about it. -->

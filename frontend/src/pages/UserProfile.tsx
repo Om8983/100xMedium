@@ -44,18 +44,20 @@ export const UserProfile = () => {
 
     const sendOtp = async () => {
         try {
+            setBox(true)
             const res = await axios.get(`${USERS_BACKEND_URL}/getOtp`)
             if (res.status === 200) {
                 const { OTP } = res.data;
                 setOTP(OTP)
-                setBox(true)
             }
         } catch (e) {
             if (e instanceof AxiosError) {
                 if (e.response?.status === 400) {
                     alert("Error While Sending OTP")
+                    setBox(false)
                 } else {
                     alert("Internal Server Error")
+                    setBox(false)
                 }
             }
         }

@@ -29,9 +29,9 @@ export const Counter = ({ seconds, setValue }: Prop) => {
 
 return (
     <>
-        <div className=" flex gap-2 bottom-0 ">
-            <label htmlFor="otp" className=" text-xs text-gray-300 "> Resend OTP in </label>
-            <div className="text-xs text-gray-300">
+        <div className=" flex gap-2 bottom-0 self-center">
+            <label htmlFor="otp" className=" text-sm font-serif "> Resend OTP in </label>
+            <div className="text-sm font-sans">
                 {
                     `${`0` + min}:${sec < 10 ? `0` + sec : sec}`
                 }

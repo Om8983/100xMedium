@@ -6,6 +6,9 @@ import { verifiedEmail } from "../store/atoms/userInfoAtom"
 import { UserEmailProfile } from "./UserEmailProfile"
 import { useState } from "react"
 import { UserUpdate } from "@om_wadhi/common"
+import { NavLinks } from "./NavLinks"
+import axios, { AxiosError } from "axios"
+import { USERS_BACKEND_URL } from "../config"
 
 type Props = {
     username: string
@@ -16,101 +19,152 @@ type Props = {
     onClickVerify: () => void
 }
 export const UserProfileCard = ({ username, email, onClickLogout, onClickSendOtp, box, onClickVerify }: Props) => {
+
     const navigate = useNavigate();
-    const verified = useRecoilValue(verifiedEmail);
     const [edit, setEdit] = useState(false)
-    
-    const handleEdit = () => {
-        setEdit(true)
+    const verified = useRecoilValue(verifiedEmail)
+    const [emptyInput, setInput] = useState(false)
+    const [changes, setChanges] = useState<UserUpdate>({
+        username: username,
+        email: email
+    })
+    const [fieldUpdate, setUpdate] = useState<UserUpdate>({})
+
+
+    const handleChange = (field: string, changedVal: string) => {
+        setChanges((prev) => ({
+            ...prev, [field]: changedVal
+        }))
+    }
+    // explanation to this is in README.md file
+    const handleSave = async () => {
+        try {
+            if (changes.username !== username) {
+                fieldUpdate.username = changes.username
+            }
+            if (changes.email !== email) {
+                fieldUpdate.email = changes.email
+            }
+            if (changes.username === username && changes.email === email) {
+                console.log("No changes were made ");
+                setEdit(false)
+                return
+            }
+
+            const res = await axios.put(`${USERS_BACKEND_URL}/updateUser`, fieldUpdate, { withCredentials: true })
+            if (res.status === 200) {
+                alert("user info update success")
+                setEdit(false)
+            }
+
+        } catch (e) {
+            if (e instanceof AxiosError) {
+                if (e.response?.status === 401) {
+                    alert("User Unauthorized")
+                    navigate("/login")
+                }
+                if (e.response?.status === 403) {
+                    alert("Please enter Valid Information")
+                }
+                if (e.response?.status === 500) {
+                    alert("Internal Server Error!!")
+                }
+            }
+        }
     }
 
+
     return (
-        // 0f4c68
-        <div className="bg-[#011e2b] h-screen w-screen flex items-center justify-center">
+        <>
+            <div className="  w-screen min-h-screen bg-[url(/paper.png)] bg-fixed bg-no-repeat bg-cover  ">
+                <NavLinks />
 
-            <div className="absolute rounded-lg bg-brad w-[20rem] h-[36rem] md:w-[30rem] blur-xl  "></div>
-
-            <div className='relative flex '>
-
-                <div className="relative flex flex-col  w-[20rem] h-[36rem] md:w-[30rem] bg-[#0f4c68] rounded-lg shadow-2xl">
-                    <div className="relative flex justify-center items-center h-[150px] w-full border-b-2 border-white">
-
-                        <span className="absolute w-[6rem] h-[6rem] bg-brad rounded-full blur-xl "></span>
-                        {/* need to add a small edit icon to update the image and send to backend */}
-                        <img src="/user.svg" className=" relative rounded-full ring-1 bg-gray-300 ring-white w-[6rem] h-[6rem] " alt="usersvg" />
-
+                <div className="flex flex-col items-center md:grid md:grid-cols-4 mt-5 lg:mt-24 ">
+                    {/* user img */}
+                    <div className="w-32 h-32 bg-orange-50 rounded-full outline-none col-span-2 col-start-1 md:mx-auto md:w-44 md:h-44 lg:w-[14rem] lg:h-[14rem]">
+                        <img src="/user.svg" alt="userImg" />
                     </div>
-                    <div className="flex flex-col gap-4 justify-center pt-4 ">
-                        <button className="text-white tracking-wide text-md rounded-md font-bold p-1  h-6 text-center font-sans" onClick={handleEdit}>Edit Profile  <span className="inline-block"><img className=" w-4 h-4" src="/pencil.svg" alt="pencil" /></span></button>
+
+                    {/* details */}
+                    <div className="flex flex-col items-center ">
+                        {/* edit profile btn */}
+                        <button className="bg-orange-200 self-center px-2 py-1 rounded-md text-sm font-serif font-medium mt-5 md:mt-6 lg:text-base lg:px-3" onClick={() => setEdit(true)} >
+                            Edit Profile
+                        </button>
+
+                        {/* save btn */}
                         {
                             edit &&
-                            <button className="text-white text-center bg-green-500 w-12 text-sm rounded-md p-1 self-center">Save</button>
-                        }
-                    </div>
-                    <div className="flex flex-col gap-7 m-3 pt-8">
-                        {/* username & email  */}
-                        <UserEmailProfile edit={edit} nameVal={username} emailVal={email}/>
-                        {/* email verify button */}
-                        {
-                            !box && verified === false &&
-                            <div className="relative flex justify-center ">
-                                <span className="absolute bg-brad w-[3.3rem] h-[1.9rem] blur-lg "></span>
-                                <button className="relative text-white text-sm rounded-md bg-green-500 font-medium w-[3.4rem] h-[1.9rem] text-center
-                            p-1" onClick={onClickSendOtp} >Verify</button>
-                            </div>
-
-                        }
-                        {
-                            verified === true &&
-                            <div className="relative flex justify-center ">
-                                <span className="absolute bg-brad w-[5rem] h-[1.9rem] blur-lg "></span>
-                                <button className="relative text-gray-200 text-sm rounded-md bg-green-700 font-medium w-[5rem] h-[1.9rem] text-centerp-1" disabled >Verified &#10003; </button>
+                            <div className="flex gap-5">
+                                <button className="bg-orange-200 px-3 py-1 rounded-md text-sm font-serif font-medium mt-4 md:mt-3 lg:mt-5 lg:text-base lg:px-2" onClick={handleSave} >
+                                    Save
+                                </button>
+                                <button className="bg-orange-200 px-2 py-1 rounded-md text-sm font-serif font-medium mt-4 md:mt-3 lg:mt-5 lg:text-base lg:px-2" onClick={() => setEdit(false)} >
+                                    Cancel
+                                </button>
                             </div>
                         }
 
+                        {/* username & email */}
+                        <UserEmailProfile edit={edit} nameVal={changes.username ?? ""} emailVal={changes.email ?? ""} setOnChange={handleChange} />
 
-                        {/* input box with verify end */}
+                        {/* verify btn*/}
                         {
-                            box && verified === false &&
-                            <>
-                                <div className="flex flex-col md:gap-5 ">
-                                    <div className="flex justify-center">
-                                        <div className="flex flex-col gap-1  ">
-                                            <p className="text-xs text-gray-300 md:self-start">Check Your Email For OTP</p>
-                                            <div className="flex gap-3 justify-between md:justify-center">
-                                                <input id="otpInputBox" type="text" className="outline-none w-[12rem] placeholder:text-center placeholder:text-sm text-sm text-center rounded-md p-1  " placeholder="Enter OTP" />
-                                                <button className="relative text-white text-sm rounded-md bg-green-500 font-medium w-[4rem] h-[1.9rem] text-center p-1" onClick={onClickVerify} >Verify</button>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="self-center">
-                                        <CountDown />
-                                    </div>
-                                </div>
-                            </>
-                        }
-                        {/* home and logout btns */}
-                        <div className="flex justify-around w-full ">
-                            {/* home */}
-                            <button className="flex  justify-center  items-center space-x-2 mt-2" onClick={() => navigate("/protected")}>
-                                <div className="text-white font-medium">Home </div>
-                                <span ><img className="w-5 h-5" src="/home.svg" alt="logout" /></span>
+                            !verified && !box &&
+                            <button className="bg-orange-200 px-2 py-1 self-center rounded-md text-sm font-serif font-medium mt-5 md:mt-6 lg:text-base" onClick={onClickSendOtp} >
+                                Verify Email
                             </button>
-                            {/* logout */}
-                            <div className="flex  justify-center  items-center space-x-2 mt-2" >
-                                <button onClick={onClickLogout} className="text-white font-medium ">Log Out </button>
-                                <span ><img className="w-5 h-5" src="/logout.svg" alt="logout" /></span>
-                            </div>
-                        </div>
+                        }
+
+                        {/* verified */}
+                        {
+                            verified &&
+                            <button className="bg-orange-200 flex gap-1 px-2 py-1 rounded-md text-sm font-serif font-medium text-gray-500 mt-5 md:mt-6 lg:text-lg" disabled >
+                                Verified
+                                <span className="w-5 h-5"><img src="/check.svg" alt="checked" /></span>
+                            </button>
+                        }
+
+                        {/* verify with otp box */}
+                        {
+                            !verified && box &&
+                            <>
+                                <div className="flex items-center gap-3 mt-5 mb-2 md:mt-6 md:mb-3 lg:mt-10 lg:gap-4">
+                                    <input type="text" className="w-[8rem] min-h-[1.7rem] bg-orange-50 rounded-md outline-none text-center text-sm lg:text-base lg:w-[9rem] " placeholder="Enter OTP" />
+                                    <button className="bg-orange-200 flex gap-1 px-2 py-1 rounded-md text-center text-sm font-serif font-medium md:w-[6rem] md:px-3 lg:text-sm " onClick={onClickVerify} >
+                                        Verify OTP
+                                    </button>
+                                </div>
+                                {/* countdown timer */}
+                                <CountDown />
+                            </>
+
+                        }
+
+                        {/* logout btn */}
+                        <button className="bg-orange-200 flex items-center gap-1 px-2 py-1 rounded-md text-sm font-serif font-medium mt-5 md:mt-10 self-center lg:text-base" onClick={onClickLogout} >
+                            Log Out
+                            <span className="w-5 h-5"><img src="/logout.svg" alt="" /></span>
+                        </button>
                     </div>
                 </div>
-
-
             </div>
-        </div>
+        </>
     )
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 // on the dashboard the user svg icon over navlinks must have a pulse animation that would target the user to folow the user profile, and ask to edit the info.

@@ -231,36 +231,100 @@ router.get("/details", async (c) => {
   }
 });
 
+router.put("/updateUser", userUpdateSchema, async (c) => {
+  try {
+    // 1. Initializing Prisma Client
+    const prisma = new PrismaClient({
+      datasourceUrl: c.env.DATABASE_URL,
+    }).$extends(withAccelerate());
+    // before all this happens i should validate the user based on the accessToken sent as credentials. If its not valid, send an "invalid token" response to the FE.
+    const accessToken = getCookie(c, "accessToken");
+    if (!accessToken) {
+      return c.json({ msg: "token not received" }, 401);
+    }
+    const decodedData = await verify(accessToken, c.env.ACCESSTOKEN_SECRET);
+    const { id } = decodedData;
+    // zod validation
+    const data = c.req.valid("json");
+    const { username, email } = data;
+
+    // 2. store the user info in an obj since both fields are optional
+    type Update = {
+      username?: string;
+      email?: string;
+    };
+    console.log("username Length: ", data.username?.length);
+    console.log(data.email?.length);
+
+    const updateInfo = <Update>{};
+    if (data.username?.length !== 0) updateInfo.username = username;
+    if (data.email?.length !== 0) updateInfo.email = email;
+    console.log(updateInfo);
+    
+    // 3. we will update user info
+    const updatedInfo = await prisma.user.update({
+      where: {
+        id: id as string,
+      },
+      data: {
+        username: updateInfo.username,
+        email: updateInfo.email,
+      },
+      select: {
+        username: true,
+        email: true,
+      },
+    });
+
+    // 4. on frontend user will receive infos
+    return c.json(
+      {
+        success: "true",
+        user: { username: updatedInfo.username, email: updatedInfo.email },
+      },
+      200
+    );
+  } catch (e) {
+    return c.json({ msg: "tampered token" }, 500);
+  }
+});
+
 router.get("/myblogs", async (c) => {
   try {
     // Initializing Prisma Client
     const prisma = new PrismaClient({
       datasourceUrl: c.env.DATABASE_URL,
     }).$extends(withAccelerate());
-    
+
     //see if access token is present
     const accessToken = getCookie(c, "accessToken");
-    
+
     if (!accessToken) {
       return c.json({ msg: "token not received" }, 401);
     }
     const decodedData = await verify(accessToken, c.env.ACCESSTOKEN_SECRET);
-    
-    const id =  c.req.query("id")
-    
+
+    const id = c.req.query("id");
+
     // search user and get blog posts
     const userBlog = await prisma.user.findFirst({
       where: {
         id: id as string,
       },
       select: {
-        username : true,
+        username: true,
         posts: true,
       },
     });
-    
+
     // return success with blog posts
-    return c.json({ msg: "success", user: {username : userBlog?.username, post: userBlog?.posts} }, 200);
+    return c.json(
+      {
+        msg: "success",
+        user: { username: userBlog?.username, post: userBlog?.posts },
+      },
+      200
+    );
   } catch (e) {
     return c.json({ msg: "Something Went Wrong" }, 500);
   }

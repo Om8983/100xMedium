@@ -23,7 +23,6 @@ export const UserProfileCard = ({ username, email, onClickLogout, onClickSendOtp
     const navigate = useNavigate();
     const [edit, setEdit] = useState(false)
     const verified = useRecoilValue(verifiedEmail)
-    const [emptyInput, setInput] = useState(false)
     const [changes, setChanges] = useState<UserUpdate>({
         username: username,
         email: email
@@ -119,7 +118,7 @@ export const UserProfileCard = ({ username, email, onClickLogout, onClickSendOtp
                         {/* verified */}
                         {
                             verified &&
-                            <button className="bg-orange-200 flex gap-1 px-2 py-1 rounded-md text-sm font-serif font-medium text-gray-500 mt-5 md:mt-6 lg:text-lg" disabled >
+                            <button className="bg-orange-200 flex gap-1 items-center px-2 py-1 rounded-md text-sm font-serif font-medium text-gray-500 mt-5 md:mt-6 lg:text-lg" disabled >
                                 Verified
                                 <span className="w-5 h-5"><img src="/check.svg" alt="checked" /></span>
                             </button>

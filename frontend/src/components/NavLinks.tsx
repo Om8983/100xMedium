@@ -3,9 +3,10 @@ import { Link, useNavigate } from "react-router-dom"
 import { Dropdown } from "./Dropdown"
 import { DropdownOpt } from "./dropdownOpt"
 import axios, { AxiosError } from "axios"
-import { useRecoilState, useSetRecoilState } from "recoil"
+import { useRecoilState } from "recoil"
 import { USERS_BACKEND_URL } from "../config"
-import { userId, userLoginAtom } from "../store/atoms/userInfoAtom"
+import { userLoginAtom } from "../store/atoms/userInfoAtom"
+import { SearchBar } from "./SearchBar"
 
 // import { Dropdown } from "./Dropdown"
 type Prop = {
@@ -14,9 +15,6 @@ type Prop = {
 export const NavLinks = ({ className }: Prop) => {
     const navigate = useNavigate();
     const [userLogin, setUserLogin] = useRecoilState(userLoginAtom)
-    const setUserID = useSetRecoilState(userId)
-    const [searchVal, setSearchVal] = useState<string>("")  // we are gonna define a hook that grabs the backend data object and returns the response cards with debouncing feature
-
     const [drop, setDrop] = useState(false)
     // defining window.scrollY directly won't affect in the className. It is a dynamic event so you have to use useEffect() to track the changes 
     const [scroll, setScroll] = useState(false)
@@ -79,10 +77,8 @@ export const NavLinks = ({ className }: Prop) => {
                     {/* search Bar */}
                     {/* supposed to be rendered only on /blog page */}
                     {window.location.pathname === "/blog" &&
-                        <div className="pt-2">
-                            <li>
-                                <input type="text" className=" w-[120px] lg:w-[400px] h-8 bg-transparent backdrop-blur-lg shadow-md rounded-xl border-2 border-black placeholder:text-center outline-none lg:p-4 " onChange={(e) => setSearchVal(e.target.value)} placeholder="Search Here" />
-                            </li>
+                        <div className="relative">
+                            <SearchBar />
                         </div>
                     }
 
@@ -91,13 +87,13 @@ export const NavLinks = ({ className }: Prop) => {
                             // user is logged in represent his image and on click show dropdown with logout button & profile button  
                             <li>
                                 <Dropdown onClick={handleNavigation} />
-                                <div className="">
+                                <div >
                                     <div className={` ${drop ? "transition transform duration-150 ease-in-out scale-100 " : " opacity-0 scale-0"} absolute w-screen h-screen bg-transparent backdrop-blur-lg  right-0 top-0  `} >
                                         <button className="absolute top-6 right-6 w-8 h-8 transition-transform hover:scale-110" onClick={handleclick}> <img src="/dropclose.svg" alt="closesvg" /></button>
 
                                         <div className="flex flex-col gap-3 justify-center items-center h-screen">
                                             <DropdownOpt onclick={() => userProfile()} text="User Profile" svg="/user.svg" />
-                                            <DropdownOpt onclick={() => navigate("/myblogs")}  text="My Blogs" svg="/blog.svg" />
+                                            <DropdownOpt onclick={() => navigate("/myblogs")} text="My Blogs" svg="/blog.svg" />
                                             <DropdownOpt onclick={handleLogout} text="Log Out" svg="/logout.svg" />
                                         </div>
                                     </div>
@@ -117,8 +113,8 @@ export const NavLinks = ({ className }: Prop) => {
                                 </div>
                             </>
                     }
-                </ul>
-            </div>
+                </ul >
+            </div >
         </>
     )
 }

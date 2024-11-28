@@ -8,7 +8,7 @@ type Props = {
     username: string;
     email: string;
     id: string;
-    verified : boolean;
+    verified: boolean;
   };
   ACCESSTOKEN_SECRET: string;
 };
@@ -17,9 +17,8 @@ export const RefreshAccessToken = async ({
   user,
   ACCESSTOKEN_SECRET,
 }: Props) => {
-    console.log("creating");
-    
-  // Generate a new access token
+  try{
+    // Generate a new access token
   const newAccessToken = await sign(
     {
       id: user.id,
@@ -39,4 +38,7 @@ export const RefreshAccessToken = async ({
     sameSite: "None",
     httpOnly: true,
   });
+  }catch(e){
+    return c.json({msg : "error while setting cookies"}, 500)
+  }
 };

@@ -3,12 +3,15 @@ import { withAccelerate } from "@prisma/extension-accelerate";
 import { Hono } from "hono";
 import { createBlogSchema, updateBlogSchema } from "../zod/index.zod";
 import { getCookie } from "hono/cookie";
-import { decode, verify } from "hono/jwt";
+import { verify } from "hono/jwt";
+import { prismaInstance } from "../prismaInstance";
+import { RefreshAccessToken } from "../controllers/access.refresh";
 
 const router = new Hono<{
   Bindings: {
     DATABASE_URL: string;
     ACCESSTOKEN_SECRET: string;
+    REFRESHTOKEN_SECRET: string;
   };
   Variables: {
     authorId: string;
@@ -17,14 +20,49 @@ const router = new Hono<{
 
 // creating middleware to extract user id to store the blog related to that user
 router.use("*", async (c, next) => {
+  const { prisma } = prismaInstance(c);
   try {
-    const prisma = new PrismaClient({
-      datasourceUrl: c.env.DATABASE_URL,
-    }).$extends(withAccelerate());
-    const token = getCookie(c, "accessToken");
-    const user = await verify(token ?? "", c.env.ACCESSTOKEN_SECRET);
-    c.set("authorId", user.id as string);
-    await next();
+    const accessToken = getCookie(c, "accessToken");
+    if (!accessToken) {
+      // refresh token logic
+      const refreshToken = getCookie(c, "refreshToken");
+      if (!refreshToken) {
+        return c.json({ msg: "Access Denied" }, 401);
+      }
+      try {
+        const verified = await verify(refreshToken, c.env.REFRESHTOKEN_SECRET);
+        const { id } = verified;
+
+        // Fetch user from the database
+        const user = await prisma.user.findUnique({
+          where: { id: id as string },
+          select: { id: true, username: true, email: true, verified: true },
+        });
+
+        if (!user) {
+          return c.json({ msg: "User not found" }, 404);
+        }
+        // assigning new accessToken
+        RefreshAccessToken({
+          c,
+          user: {
+            username: user.username,
+            email: user.email,
+            id: user.id,
+            verified: user.verified as boolean,
+          },
+          ACCESSTOKEN_SECRET: c.env.ACCESSTOKEN_SECRET,
+        });
+        c.set("authorId", user.id);
+        await next();
+      } catch (e) {
+        return c.json({ msg: "Invalid refresh token" }, 401);
+      }
+    } else {
+      const user = await verify(accessToken, c.env.ACCESSTOKEN_SECRET);
+      c.set("authorId", user.id as string);
+      await next();
+    }
   } catch (e) {
     return c.json({ msg: "Token expired. Please Login" }, 401);
   }

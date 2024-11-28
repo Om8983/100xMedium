@@ -1,4 +1,4 @@
-import { Hono } from "hono";
+import { Context, Hono } from "hono";
 import bcrypt from "bcryptjs";
 import { PrismaClient } from "@prisma/client/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
@@ -7,12 +7,14 @@ import {
   userSignupValidation,
   userUpdateSchema,
 } from "../zod/index.zod";
-import { decode, sign, verify } from "hono/jwt";
-import { deleteCookie, getCookie, setCookie } from "hono/cookie";
+import { verify } from "hono/jwt";
+import { deleteCookie, getCookie } from "hono/cookie";
 import { Cookies } from "../controllers/cookies";
 import { generateOTP, totp } from "../controllers/otpAuth";
 import { Resend } from "resend";
 import { RefreshAccessToken } from "../controllers/access.refresh";
+import { prismaInstance } from "../prismaInstance";
+import { RefreshLogic } from "../controllers/refreshLogic";
 type Bindings = {
   DATABASE_URL: string;
   ACCESSTOKEN_SECRET: string;
@@ -21,11 +23,56 @@ type Bindings = {
 };
 const router = new Hono<{ Bindings: Bindings }>();
 
+const accessTokenValidation = async (c: Context, next: () => Promise<void>) => {
+  const accessToken = getCookie(c, "accessToken");
+  if (!accessToken) {
+    // Initializing Prisma Client
+    const { prisma } = prismaInstance(c);
+    const refreshToken = getCookie(c, "refreshToken");
+
+    if (!refreshToken) {
+      return c.json({ msg: "Access Denied" }, 401);
+    }
+
+    // Extracting user id from refreshToken
+    try {
+      const verified = await verify(refreshToken, c.env.REFRESHTOKEN_SECRET);
+
+      const { id } = verified;
+
+      // Fetch user from the database
+      const user = await prisma.user.findUnique({
+        where: { id: id as string },
+        select: { id: true, username: true, email: true, verified: true },
+      });
+
+      if (!user) {
+        return c.json({ msg: "User not found" }, 404);
+      }
+      // assigning new accessToken
+      RefreshAccessToken({
+        c,
+        user: {
+          username: user.username,
+          email: user.email,
+          id: user.id,
+          verified: user.verified as boolean,
+        },
+        ACCESSTOKEN_SECRET: c.env.ACCESSTOKEN_SECRET,
+      });
+
+      return c.json({ msg: "Access approved", user: user }, 200);
+    } catch (err) {
+      return c.json({ msg: "Invalid refresh token" }, 401);
+    }
+  } else {
+    await next();
+  }
+};
+
 router.post("/signup", userSignupValidation, async (c) => {
   // initialize prisma instance
-  const prisma = new PrismaClient({
-    datasourceUrl: c.env.DATABASE_URL,
-  }).$extends(withAccelerate());
+  const { prisma } = prismaInstance(c);
 
   //1. introduce zod validation and export data
   const data = c.req.valid("json");
@@ -78,9 +125,7 @@ router.post("/signup", userSignupValidation, async (c) => {
 
 router.post("/login", userLoginValidation, async (c) => {
   // initialize prisma instance
-  const prisma = new PrismaClient({
-    datasourceUrl: c.env.DATABASE_URL,
-  }).$extends(withAccelerate());
+  const { prisma } = prismaInstance(c);
 
   // zod validation
   const data = c.req.valid("json");
@@ -156,153 +201,110 @@ router.post("/logout", async (c) => {
   return c.json({ msg: "success" });
 });
 
-router.get("/details", async (c) => {
+router.get("/details", accessTokenValidation, async (c) => {
   // 1. Initializing Prisma Client
-  const prisma = new PrismaClient({
-    datasourceUrl: c.env.DATABASE_URL,
-  }).$extends(withAccelerate());
+  const { prisma } = prismaInstance(c);
 
   const { id } = c.req.query();
-
   try {
     // Getting accessToken from cookies
     const accessToken = getCookie(c, "accessToken");
-
-    if (!accessToken) {
-      // Getting refreshToken if accessToken is not found
-      const refreshToken = getCookie(c, "refreshToken");
-
-      if (!refreshToken) {
-        return c.json({ msg: "Access Denied" }, 401);
-      }
-
-      // Extracting user id from refreshToken
-      try {
-        const verified = await verify(refreshToken, c.env.REFRESHTOKEN_SECRET);
-
-        // Fetch user from the database
-        const user = await prisma.user.findUnique({
-          where: { id: id as string },
-          select: { id: true, username: true, email: true, verified: true },
-        });
-
-        if (!user) {
-          return c.json({ msg: "User not found" }, 404);
-        }
-        // assigning new accessToken
-        await RefreshAccessToken({
-          c: c,
-          user: {
-            username: user.username,
-            email: user.email,
-            id: user.id,
-            verified: user.verified as boolean,
+    try {
+      const verifyToken = await verify(
+        accessToken as string,
+        c.env.ACCESSTOKEN_SECRET
+      );
+      if (verifyToken) {
+        const user = await prisma.user.findFirst({
+          where: {
+            id: id,
           },
-          ACCESSTOKEN_SECRET: c.env.ACCESSTOKEN_SECRET,
+          select: {
+            username: true,
+            email: true,
+            verified: true,
+          },
         });
-
-        return c.json({ msg: "Access approved", user: user }, 200);
-      } catch (err) {
-        return c.json({ msg: "Invalid refresh token" }, 401);
+        return c.json({ success: "true", user: user }, 200);
       }
-    } else {
-      try {
-        const verifyToken = await verify(accessToken, c.env.ACCESSTOKEN_SECRET);
-        if (verifyToken) {
-          const user = await prisma.user.findFirst({
-            where: {
-              id: id,
-            },
-            select: {
-              username: true,
-              email: true,
-              verified: true,
-            },
-          });
-          return c.json({ success: "true", user: user }, 200);
-        }
-      } catch (e) {
-        return c.json({ msg: "Invalid AccessTOken" }, 401);
-      }
+    } catch (e) {
+      return c.json({ msg: "Invalid AccessTOken" }, 401);
     }
   } catch (error) {
-    console.error("Authentication error:", error);
     return c.json({ msg: "Internal Server Error" }, 500);
+  } finally {
+    await prisma.$disconnect(); // Disconnect Prisma to free resources
   }
 });
 
-router.put("/updateUser", userUpdateSchema, async (c) => {
-  try {
+router.put(
+  "/updateUser",
+  accessTokenValidation,
+  userUpdateSchema,
+  async (c) => {
     // 1. Initializing Prisma Client
-    const prisma = new PrismaClient({
-      datasourceUrl: c.env.DATABASE_URL,
-    }).$extends(withAccelerate());
-    // before all this happens i should validate the user based on the accessToken sent as credentials. If its not valid, send an "invalid token" response to the FE.
-    const accessToken = getCookie(c, "accessToken");
-    if (!accessToken) {
-      return c.json({ msg: "token not received" }, 401);
+    const { prisma } = prismaInstance(c);
+    try {
+      // before all this happens i should validate the user based on the accessToken sent as credentials. If its not valid, send an "invalid token" response to the FE.
+      const accessToken = getCookie(c, "accessToken");
+      if (!accessToken) {
+        return c.json({ msg: "token not received" }, 401);
+      }
+      const decodedData = await verify(accessToken, c.env.ACCESSTOKEN_SECRET);
+      const { id } = decodedData;
+      // zod validation
+      const data = c.req.valid("json");
+      const { username, email } = data;
+
+      // 2. store the user info in an obj since both fields are optional
+      type Update = {
+        username?: string;
+        email?: string;
+      };
+      const updateInfo = <Update>{};
+      if (data.username?.length !== 0) updateInfo.username = username;
+      if (data.email?.length !== 0) updateInfo.email = email;
+
+      // 3. we will update user info
+      const updatedInfo = await prisma.user.update({
+        where: {
+          id: id as string,
+        },
+        data: {
+          username: updateInfo.username,
+          email: updateInfo.email,
+        },
+        select: {
+          username: true,
+          email: true,
+        },
+      });
+
+      // 4. on frontend user will receive infos
+      return c.json(
+        {
+          success: "true",
+          user: { username: updatedInfo.username, email: updatedInfo.email },
+        },
+        200
+      );
+    } catch (e) {
+      return c.json({ msg: "tampered token" }, 500);
     }
-    const decodedData = await verify(accessToken, c.env.ACCESSTOKEN_SECRET);
-    const { id } = decodedData;
-    // zod validation
-    const data = c.req.valid("json");
-    const { username, email } = data;
-
-    // 2. store the user info in an obj since both fields are optional
-    type Update = {
-      username?: string;
-      email?: string;
-    };
-    console.log("username Length: ", data.username?.length);
-    console.log(data.email?.length);
-
-    const updateInfo = <Update>{};
-    if (data.username?.length !== 0) updateInfo.username = username;
-    if (data.email?.length !== 0) updateInfo.email = email;
-    console.log(updateInfo);
-    
-    // 3. we will update user info
-    const updatedInfo = await prisma.user.update({
-      where: {
-        id: id as string,
-      },
-      data: {
-        username: updateInfo.username,
-        email: updateInfo.email,
-      },
-      select: {
-        username: true,
-        email: true,
-      },
-    });
-
-    // 4. on frontend user will receive infos
-    return c.json(
-      {
-        success: "true",
-        user: { username: updatedInfo.username, email: updatedInfo.email },
-      },
-      200
-    );
-  } catch (e) {
-    return c.json({ msg: "tampered token" }, 500);
   }
-});
+);
 
-router.get("/myblogs", async (c) => {
+router.get("/myblogs", RefreshLogic, async (c) => {
+  // Initializing Prisma Client
+  const { prisma } = prismaInstance(c);
   try {
-    // Initializing Prisma Client
-    const prisma = new PrismaClient({
-      datasourceUrl: c.env.DATABASE_URL,
-    }).$extends(withAccelerate());
-
     //see if access token is present
     const accessToken = getCookie(c, "accessToken");
-
-    if (!accessToken) {
-      return c.json({ msg: "token not received" }, 401);
-    }
-    const decodedData = await verify(accessToken, c.env.ACCESSTOKEN_SECRET);
+    const decodedData = await verify(
+      accessToken as string,
+      c.env.ACCESSTOKEN_SECRET
+    );
+    console.log("hi");
 
     const id = c.req.query("id");
 
@@ -329,66 +331,23 @@ router.get("/myblogs", async (c) => {
     return c.json({ msg: "Something Went Wrong" }, 500);
   }
 });
-router.get("/authCheck", async (c) => {
+router.get("/authCheck", accessTokenValidation, async (c) => {
   // Initializing Prisma Client
-  const prisma = new PrismaClient({
-    datasourceUrl: c.env.DATABASE_URL,
-  }).$extends(withAccelerate());
-
+  const { prisma } = prismaInstance(c);
   try {
     // Getting accessToken from cookies
     const accessToken = getCookie(c, "accessToken");
-
-    if (!accessToken) {
-      // Getting refreshToken if accessToken is not found
-      const refreshToken = getCookie(c, "refreshToken");
-
-      if (!refreshToken) {
-        return c.json({ msg: "Access Denied" }, 401);
-      }
-
-      // Extracting user id from refreshToken
-      try {
-        const verified = await verify(refreshToken, c.env.REFRESHTOKEN_SECRET);
-
-        const { id } = verified;
-
-        // Fetch user from the database
-        const user = await prisma.user.findUnique({
-          where: { id: id as string },
-          select: { id: true, username: true, email: true, verified: true },
-        });
-
-        if (!user) {
-          return c.json({ msg: "User not found" }, 404);
-        }
-        // assigning new accessToken
-        RefreshAccessToken({
-          c,
-          user: {
-            username: user.username,
-            email: user.email,
-            id: user.id,
-            verified: user.verified as boolean,
-          },
-          ACCESSTOKEN_SECRET: c.env.ACCESSTOKEN_SECRET,
-        });
-
-        return c.json({ msg: "Access approved", user: user }, 200);
-      } catch (err) {
-        return c.json({ msg: "Invalid refresh token" }, 401);
-      }
-    } else {
-      const decodedData = await verify(accessToken, c.env.ACCESSTOKEN_SECRET);
-      const { id, verified } = decodedData;
-      // If access token is valid, return success message
-      return c.json(
-        { msg: "Access approved", user: { id: id, verified: verified } },
-        200
-      );
-    }
+    const decodedData = await verify(
+      accessToken as string,
+      c.env.ACCESSTOKEN_SECRET
+    );
+    const { id, verified } = decodedData;
+    // If access token is valid, return success message
+    return c.json(
+      { msg: "Access approved", user: { id: id, verified: verified } },
+      200
+    );
   } catch (error) {
-    console.error("Authentication error:", error);
     return c.json({ msg: "Internal Server Error" }, 500);
   } finally {
     await prisma.$disconnect(); // Disconnect Prisma to free resources
@@ -418,7 +377,7 @@ router.get("/verifyOtp", async (c) => {
     datasourceUrl: c.env.DATABASE_URL,
   }).$extends(withAccelerate());
 
-  const body = await c.req.query();
+  const body = c.req.query();
   const { OTP, id } = body;
   const delta = totp.validate({ token: OTP, window: 1 }); //returns 0 for success and -1 if wrong otp & null if not found in the window which is considered as invalid
 

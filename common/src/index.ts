@@ -21,7 +21,10 @@ export const userInfoUpdateSchema = z.object({
 // blog schemas
 export const blogCreateSchema = z.object({
   title: z.string(),
-  content: z.string(),
+  content: z.object({
+    type: z.literal("doc"),
+    content: z.array(z.object({})),
+  }),
 });
 
 export const blogUpdateSchema = z.object({

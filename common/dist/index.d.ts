@@ -34,13 +34,28 @@ export declare const userInfoUpdateSchema: z.ZodObject<{
 }>;
 export declare const blogCreateSchema: z.ZodObject<{
     title: z.ZodString;
-    content: z.ZodString;
+    content: z.ZodObject<{
+        type: z.ZodLiteral<"doc">;
+        content: z.ZodArray<z.ZodObject<{}, "strip", z.ZodTypeAny, {}, {}>, "many">;
+    }, "strip", z.ZodTypeAny, {
+        type: "doc";
+        content: {}[];
+    }, {
+        type: "doc";
+        content: {}[];
+    }>;
 }, "strip", z.ZodTypeAny, {
     title: string;
-    content: string;
+    content: {
+        type: "doc";
+        content: {}[];
+    };
 }, {
     title: string;
-    content: string;
+    content: {
+        type: "doc";
+        content: {}[];
+    };
 }>;
 export declare const blogUpdateSchema: z.ZodObject<{
     blogId: z.ZodOptional<z.ZodString>;

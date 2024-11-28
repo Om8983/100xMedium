@@ -20,7 +20,10 @@ exports.userInfoUpdateSchema = zod_1.z.object({
 // blog schemas
 exports.blogCreateSchema = zod_1.z.object({
     title: zod_1.z.string(),
-    content: zod_1.z.string(),
+    content: zod_1.z.object({
+        type: zod_1.z.literal("doc"),
+        content: zod_1.z.array(zod_1.z.object({})),
+    }),
 });
 exports.blogUpdateSchema = zod_1.z.object({
     blogId: zod_1.z.string().optional(),

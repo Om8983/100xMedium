@@ -25,6 +25,7 @@ export const blogCreateSchema = z.object({
     type: z.literal("doc"),
     content: z.array(z.object({})),
   }),
+  tag: z.array(z.string()),
 });
 
 export const blogUpdateSchema = z.object({

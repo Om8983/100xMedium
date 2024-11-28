@@ -44,18 +44,21 @@ export declare const blogCreateSchema: z.ZodObject<{
         type: "doc";
         content: {}[];
     }>;
+    tag: z.ZodArray<z.ZodString, "many">;
 }, "strip", z.ZodTypeAny, {
     title: string;
     content: {
         type: "doc";
         content: {}[];
     };
+    tag: string[];
 }, {
     title: string;
     content: {
         type: "doc";
         content: {}[];
     };
+    tag: string[];
 }>;
 export declare const blogUpdateSchema: z.ZodObject<{
     blogId: z.ZodOptional<z.ZodString>;

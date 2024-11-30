@@ -57,6 +57,6 @@ export const Cookies = async ({
       sameSite: "None",
     });
   } catch (e) {
-    console.log("error while attaching cookies");
+    return c.json({msg : "error while attaching cookies"})
   }
 };

@@ -77,7 +77,7 @@ router.post("/createBlog", createBlogSchema, async (c) => {
 
   // zod validation for user schema
   const data = c.req.valid("json");
-  const { title, content } = data;
+  const { title, content, tag } = data;
 
   // creating new post
   const blog = await prisma.post.create({
@@ -85,6 +85,7 @@ router.post("/createBlog", createBlogSchema, async (c) => {
       title: title,
       content: content,
       author_id: authorId,
+      postTag: tag,
       publishedAt: new Date().toDateString(),
     },
     select: {
@@ -184,6 +185,7 @@ router.get("/bulk", async (c) => {
       title: true,
       content: true,
       publishedAt: true,
+      postTag: true,
       author: {
         select: {
           id: true,

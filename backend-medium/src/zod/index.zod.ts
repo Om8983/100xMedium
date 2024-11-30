@@ -2,9 +2,9 @@ import { zValidator } from "@hono/zod-validator";
 import {
   userSignUpSchema,
   userLoginSchema,
-  blogCreateSchema,
   blogUpdateSchema,
   userInfoUpdateSchema,
+  blogCreateSchema,
 } from "@om_wadhi/common";
 export const userSignupValidation = zValidator(
   "json",

@@ -304,7 +304,6 @@ router.get("/myblogs", RefreshLogic, async (c) => {
       accessToken as string,
       c.env.ACCESSTOKEN_SECRET
     );
-    console.log("hi");
 
     const id = c.req.query("id");
 

@@ -17,14 +17,29 @@ export const userInfoUpdateSchema = z.object({
   username: z.string().optional(),
   email: z.string().email().optional(),
 });
+const JSONContentSchema: z.ZodType = z.lazy(() =>
+  z.object({
+    type: z.string().optional(),
+    attrs: z.record(z.any()).optional(),
+    content: z.array(JSONContentSchema).optional(),
+    marks: z
+      .array(
+        z.object({
+          type: z.string(),
+          attrs: z.record(z.any()).optional(),
+          // Optionally allow additional properties in `marks`
+          // [z.string()]: z.any(),
+        })
+      )
+      .optional(),
+    text: z.string().optional(),
+  })
+);
 
 // blog schemas
 export const blogCreateSchema = z.object({
   title: z.string(),
-  content: z.object({
-    type: z.literal("doc"),
-    content: z.array(z.object({})),
-  }),
+  content: JSONContentSchema,
   tag: z.array(z.string()),
 });
 

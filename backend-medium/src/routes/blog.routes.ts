@@ -77,13 +77,14 @@ router.post("/createBlog", createBlogSchema, async (c) => {
 
   // zod validation for user schema
   const data = c.req.valid("json");
-  const { title, content, tag } = data;
+  const { title, content,brief, tag } = data;
 
   // creating new post
   const blog = await prisma.post.create({
     data: {
       title: title,
       content: content,
+      brief : brief,
       author_id: authorId,
       postTag: tag,
       publishedAt: new Date().toDateString(),
@@ -91,6 +92,7 @@ router.post("/createBlog", createBlogSchema, async (c) => {
     select: {
       id: true,
       title: true,
+      brief: true,
       content: true,
       author: {
         select: {
@@ -120,13 +122,14 @@ router.put("/updateBlog", updateBlogSchema, async (c) => {
   // lets create a dataObject that contains only the user updated data field
   type Update = {
     title?: string;
+    brief?: string;
     content?: string;
   };
 
   const updateBlogObj: Update = {};
   if (data.title) updateBlogObj.title = data.title;
   if (data.content) updateBlogObj.content = data.content;
-
+  if(data.brief) updateBlogObj.brief = data.brief;
   await prisma.post.update({
     where: {
       id: data.blogId,
@@ -135,6 +138,7 @@ router.put("/updateBlog", updateBlogSchema, async (c) => {
     data: {
       title: data.title,
       content: data.content,
+      brief : data.brief
     },
   });
 
@@ -156,6 +160,7 @@ router.get("/id/:id", async (c) => {
     },
     select: {
       title: true,
+      brief : true,
       content: true,
       publishedAt: true,
       author: {
@@ -183,6 +188,7 @@ router.get("/bulk", async (c) => {
     select: {
       id: true,
       title: true,
+      brief : true,
       content: true,
       publishedAt: true,
       postTag: true,

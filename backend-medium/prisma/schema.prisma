@@ -26,6 +26,7 @@ model User {
 model Post {
   id          String  @id @unique @default(uuid())
   title       String
+  brief       String?
   content     Json
   published   Boolean @default(false)
   publishedAt String

@@ -34,28 +34,34 @@ export declare const userInfoUpdateSchema: z.ZodObject<{
 }>;
 export declare const blogCreateSchema: z.ZodObject<{
     title: z.ZodString;
+    brief: z.ZodOptional<z.ZodString>;
     content: z.ZodType<any, z.ZodTypeDef, any>;
     tag: z.ZodArray<z.ZodString, "many">;
 }, "strip", z.ZodTypeAny, {
     title: string;
     tag: string[];
     content?: any;
+    brief?: string | undefined;
 }, {
     title: string;
     tag: string[];
     content?: any;
+    brief?: string | undefined;
 }>;
 export declare const blogUpdateSchema: z.ZodObject<{
     blogId: z.ZodOptional<z.ZodString>;
     title: z.ZodOptional<z.ZodString>;
+    brief: z.ZodOptional<z.ZodString>;
     content: z.ZodOptional<z.ZodString>;
 }, "strip", z.ZodTypeAny, {
     content?: string | undefined;
     title?: string | undefined;
+    brief?: string | undefined;
     blogId?: string | undefined;
 }, {
     content?: string | undefined;
     title?: string | undefined;
+    brief?: string | undefined;
     blogId?: string | undefined;
 }>;
 export type SignUpSchema = z.infer<typeof userSignUpSchema>;

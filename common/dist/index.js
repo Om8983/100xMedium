@@ -25,8 +25,6 @@ const JSONContentSchema = zod_1.z.lazy(() => zod_1.z.object({
         .array(zod_1.z.object({
         type: zod_1.z.string(),
         attrs: zod_1.z.record(zod_1.z.any()).optional(),
-        // Optionally allow additional properties in `marks`
-        // [z.string()]: z.any(),
     }))
         .optional(),
     text: zod_1.z.string().optional(),
@@ -34,11 +32,13 @@ const JSONContentSchema = zod_1.z.lazy(() => zod_1.z.object({
 // blog schemas
 exports.blogCreateSchema = zod_1.z.object({
     title: zod_1.z.string(),
+    brief: zod_1.z.string().optional(),
     content: JSONContentSchema,
     tag: zod_1.z.array(zod_1.z.string()),
 });
 exports.blogUpdateSchema = zod_1.z.object({
     blogId: zod_1.z.string().optional(),
     title: zod_1.z.string().optional(),
+    brief: zod_1.z.string().optional(),
     content: zod_1.z.string().optional(),
 });

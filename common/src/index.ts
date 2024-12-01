@@ -17,6 +17,8 @@ export const userInfoUpdateSchema = z.object({
   username: z.string().optional(),
   email: z.string().email().optional(),
 });
+
+
 const JSONContentSchema: z.ZodType = z.lazy(() =>
   z.object({
     type: z.string().optional(),
@@ -27,8 +29,6 @@ const JSONContentSchema: z.ZodType = z.lazy(() =>
         z.object({
           type: z.string(),
           attrs: z.record(z.any()).optional(),
-          // Optionally allow additional properties in `marks`
-          // [z.string()]: z.any(),
         })
       )
       .optional(),
@@ -39,6 +39,7 @@ const JSONContentSchema: z.ZodType = z.lazy(() =>
 // blog schemas
 export const blogCreateSchema = z.object({
   title: z.string(),
+  brief : z.string().optional(),
   content: JSONContentSchema,
   tag: z.array(z.string()),
 });
@@ -46,6 +47,7 @@ export const blogCreateSchema = z.object({
 export const blogUpdateSchema = z.object({
   blogId: z.string().optional(),
   title: z.string().optional(),
+  brief : z.string().optional(),
   content: z.string().optional(),
 });
 

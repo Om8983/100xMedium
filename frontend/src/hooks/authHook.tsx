@@ -1,24 +1,24 @@
 import axios, { AxiosError } from "axios";
 import { useEffect, useState } from "react";
 import { USERS_BACKEND_URL } from "../config";
-import {  useSetRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import { userId, userLoginAtom } from "../store/atoms/userInfoAtom";
 import { verifiedEmail } from "../store/atoms/userInfoAtom";
 
 export const useAuth = () => {
-    const [response, setResponse] = useState<Boolean>(false)
-    const [loading, setLoading] = useState<Boolean>(true)
-    const setUserID  = useSetRecoilState(userId)
+    const [response, setResponse] = useState<boolean>(false)
+    const [loading, setLoading] = useState<boolean>(true)
+    const setUserID = useSetRecoilState(userId)
     const setVerify = useSetRecoilState(verifiedEmail)
     const setUserLogin = useSetRecoilState(userLoginAtom)
     useEffect(() => {
         (async () => {
             try {
-                
-                let res = await axios.get(`${USERS_BACKEND_URL}/authCheck`,{withCredentials : true})
-                
+
+                let res = await axios.get(`${USERS_BACKEND_URL}/authCheck`, { withCredentials: true })
+
                 if (res.status == 200) {
-                    const { id, verified }  = res.data.user;
+                    const { id, verified } = res.data.user;
                     setResponse(true)  // by default false
                     setUserID(id)
                     setVerify(verified)
@@ -29,16 +29,18 @@ export const useAuth = () => {
                 if (e instanceof AxiosError) {
 
                     if (e.response?.status === 401) {
-                        alert("unauthorized user")
                         setResponse(false)
+                        localStorage.clear()
+                        setLoading(false)
                     } else {
-                        alert("Internal server error")
                         setResponse(false)
+                        localStorage.clear()
+                        setLoading(false)
                     }
                 }
             }
         })()
         return () => { }
     }, [])
-    return {response, loading} ;
+    return { response, loading };
 }

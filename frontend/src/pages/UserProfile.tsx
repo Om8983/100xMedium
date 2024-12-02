@@ -1,5 +1,4 @@
-import { useRecoilState, useRecoilValueLoadable, useSetRecoilState } from "recoil"
-import { UserProfileCard } from "../components/UserProfileCard"
+import { useRecoilState, useRecoilValue, useRecoilValueLoadable, useSetRecoilState } from "recoil"
 import { userId, userLoginAtom, verifiedEmail } from "../store/atoms/userInfoAtom"
 import { USERS_BACKEND_URL } from "../config"
 import axios, { AxiosError } from "axios"
@@ -8,10 +7,11 @@ import { UnAuth } from "../components/UnAuth"
 import { token } from "../store/atoms/otpAtoms"
 import { useState } from "react"
 import { userProfile } from "../store/atoms/userData"
+import { UserProfileCard } from "../components/UserProfile/UserProfileCard"
 
 export const UserProfile = () => {
     const setUserLogin = useSetRecoilState(userLoginAtom)
-    const [id, setUserID] = useRecoilState(userId)
+    const id = useRecoilValue(userId)
     const userData = useRecoilValueLoadable(userProfile(id))
     const navigate = useNavigate();
 

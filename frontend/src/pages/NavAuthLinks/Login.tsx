@@ -1,12 +1,13 @@
 import { useNavigate } from "react-router-dom"
-import { Button } from "../../components/Button"
+import { Button } from "../../components/Buttons/Button"
 import { InputBox } from "../../components/InputBox"
 import { Testimonial } from "../../components/Testimonial"
 import axios, { AxiosError } from "axios"
 import { LoginSchema } from "@om_wadhi/common"
 import { useState } from "react"
 import { USERS_BACKEND_URL } from "../../config"
-import { GoogleBtn } from "../../components/GoogleBtn"
+import { GoogleBtn } from "../../components/Buttons/GoogleBtn"
+
 
 export const Login = () => {
 

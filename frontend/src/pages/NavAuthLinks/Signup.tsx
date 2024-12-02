@@ -1,13 +1,12 @@
 import { useNavigate } from "react-router-dom"
-import { Button } from "../../components/Button"
+import { Button } from "../../components/Buttons/Button"
 import { InputBox } from "../../components/InputBox"
 import { Testimonial } from "../../components/Testimonial"
 import axios, { AxiosError } from "axios"
 import { SignUpSchema } from "@om_wadhi/common"
 import { useState } from "react"
 import { USERS_BACKEND_URL } from "../../config"
-import { useSetRecoilState } from "recoil"
-import { GoogleBtn } from "../../components/GoogleBtn"
+import { GoogleBtn } from "../../components/Buttons/GoogleBtn"
 export const Signup = () => {
     const [username, setUsername] = useState<string>("")
     const [email, setEmail] = useState<string>("")

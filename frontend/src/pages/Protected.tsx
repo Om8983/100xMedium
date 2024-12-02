@@ -9,15 +9,15 @@ export const Protected = () => {
     useEffect(() => {
         if (loading === false) {
             if (response === true) {
-                navigate("/blog")
-                return
+                return navigate("/blog")
+                
             } else {
                 alert("Unauthorized User");
                 navigate("/login")
                 return
             }
         }
-    }, [response, navigate])
+    }, [response, loading, navigate])
 
     if (loading === true) {
         return (

@@ -63,8 +63,6 @@ A backend request must go out that fetches the users particular data and blogs w
 <!-- don't forget to add a "Create Blog" option on the
 "/blogs" page  -->
 
-
-
 <!-- Explanation to update profile
 -> firstly on Backend I made sure that even if from frontend the input is empty, don't include the empty value field and update the user with rest of the fields
 -> On frontend i had created this functional state component ::
@@ -77,6 +75,42 @@ A backend request must go out that fetches the users particular data and blogs w
     }
 ```
 which onChange call set the "changes" object to include the changed username and the changed email if any.
--> added a "cancel" btn in order if user doesn't want to edit or even if he tried to do so then also no backend call will be sent 
+-> added a "cancel" btn in order if user doesn't want to edit or even if he tried to do so then also no backend call will be sent
 
 -> the whole point of adding the "fieldUpdate" state was to avoid the controlled and uncontrolled changes in react. If you want to know search about it. -->
+
+<!-- Explanation for editor.destroy() in Tiptap.tsx -->
+
+<!-- As we know that tiptap being an editor does the dynamic changes over the DOM tree, for instance adding text, heading, ul, ol, eventListeners, onclick's etc. That means editor mounts the nodes to the DOM tree dynamically that says editor is dynamic component and is mounted everytime the navigation happens. The editor brings the Floating & bubbleMenu with itself for structured texts.
+When any navigation or any state changes happen again the editor gets loaded again. But as we said editor is a dynamic component and it gets mounted. Here if we think deeply over this, the conclusion we derive from this is, when the previous editor unmounts the changes remain the same. That means even if editor isn't there but still the dynamic menus it comes with still exists which would cause potential errors and bad user experience.
+
+A common error you see is "hide() was called on destroyed instance"
+other errors ::
+Stale references: Menus or plugins trying to interact with a destroyed editor instance.
+Bad user experience: Menus or UI elements behaving incorrectly or being visible when they shouldn’t.
+
+For this reason the editor component that was mounted at initial phase needs to be UNMOUNTED to avoid these errors and have a consistent editor instance.
+code :::
+useEffect(() => {
+editor.destroy();
+}, [editor])
+
+Consistency Across Mounts
+• By cleaning up the previous editor instance, you ensure that a fresh editor instance starts from a consistent state, reducing the likelihood of bugs or stale behaviors. -->
+
+
+
+<!-- lessons learnt while publish post  -->
+<!-- 1.Always remember that while working with input box onChange() always provide a "value" before "onChange()". That means you are tieing the input box functionality with the state variable. This way if the value, later, set to empty the box will be cleared 
+
+2. Whenever working with "array" or "object" state variables. So while updating the state you got that "prev" parameter which accesst the previous states and can be used to add another state to the state variable.
+
+3. how the filter method is efficiently used here to remove the elements from the array rather not removing but creating a new array where the current tag wasn't included. It mustn't be visible by our naked eyes though while updating that array. 
+This same functionality could also be performed using "splice" method -->
+
+
+<!-- useEffect needed for adding highlightjs class -->
+<!-- when the tiptap data / html/css data converted to json data via editor.getJson() method, the attributes and classes and styling is being removed from the html elements. 
+For this when we convert the json received data from backend to html, on frontend, we need to specify extensions in order to get all the data that is dependent on that extension be loaded. 
+Also for codeblocks, the classes are being removed during conversion. Hence the useEffect() that i use, is supposed to get the "pre code" elements via queryselector and add the highlightjs class to it. 
+The reason why we are using useEffect() is while applying the classes for highlight js, if has any side-effects, those must be avoided. -->

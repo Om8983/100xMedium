@@ -1,3 +1,120 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* since all the below classes came along with the tiptap & highlight.js extension, there's was no way I can apply the tw-classes directly to div's so i have to figure out the class & id's for it from console on browser */
+.tiptap {
+  outline: none;
+  width: 350px;
+  height: 500px;
+  overflow-y: hidden;
+  overflow: scroll;
+  padding: 0px 10px 0px 20px;
+  @media (min-width: 768px) {
+    width: 520px;
+  }
+  @media (min-width: 1024px) {
+    width: 720px;
+    height: 550px;
+  }
+}
+
+/* you can find the below from the tiptap website/placeholder-extension */
+.tiptap p.is-editor-empty:first-child::before {
+  color: #8a6842;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+  font-size: larger;
+  font-family: serif;
+  font-weight: 200;
+}
+.is-editor-empty {
+  margin: 0;
+}
+
+/* below classes were copied from tiptap codeblock-lowlight extension */
+
+.hljs-comment,
+.hljs-quote {
+  color: #616161;
+}
+
+.hljs-variable,
+.hljs-template-variable,
+.hljs-attribute,
+.hljs-tag,
+.hljs-regexp,
+.hljs-link,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class {
+  color: #f98181;
+}
+
+.hljs-number,
+.hljs-meta,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params {
+  color: #fbbc88;
+}
+
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet {
+  color: #b9f18d;
+}
+
+.hljs-title,
+.hljs-section {
+  color: #faf594;
+}
+
+.hljs-keyword,
+.hljs-selector-tag {
+  color: #70cff8;
+}
+
+.hljs-emphasis {
+  font-style: italic;
+}
+
+.hljs-strong {
+  font-weight: 700;
+}
+
+/* ul > li list styling when particular blog content is shown content in shown on  */
+.prose ul {
+  margin-top: 0.6rem;
+  margin-bottom: 0.6rem;
+}
+.prose ul > li {
+  font-size: 1.1rem;
+  margin-top: 0.2rem;
+  margin-bottom: 0.2rem;
+}
+.prose ul > li {
+  font-size: 1.1rem;
+  margin-top: 0.2rem;
+  margin-bottom: 0.2rem;
+}
+
+.prose ol > li {
+  font-size: 1.1rem;
+  margin-top: 0.2rem;
+  margin-bottom: 0.2rem;
+}
+.prose ul > li::marker {
+  font-size: 1rem;
+}
+.prose ol {
+  margin-top: 0.6rem;
+  margin-bottom: 0.6rem;
+}
+.prose ol > li::marker {
+  font-size: 1rem;
+}

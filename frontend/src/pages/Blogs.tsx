@@ -1,15 +1,13 @@
 import { BlogCard } from "../components/BlogCard"
-import { NavLinks } from "../components/NavLinks"
 import { useBulkBlog } from "../hooks/bulkBlog";
 import { BlogCardSkeleton } from "../components/BlogCardSkeleton";
 import { useRecoilValue } from "recoil";
 import { userLoginAtom } from "../store/atoms/userInfoAtom";
-import { useNavigate } from "react-router-dom";
 import { UnAuth } from "../components/UnAuth";
+import { NavLinks } from "../components/NavBar/NavLinks";
 
 export const Blogs = () => {
   const userLogin = useRecoilValue(userLoginAtom)
-  const navigate = useNavigate();
 
   // populating blogs
   const { data, loading } = useBulkBlog();
@@ -24,19 +22,21 @@ export const Blogs = () => {
     }
     return <div className=" flex flex-col gap-2 items-center w-screen min-h-screen bg-[url(/paper.png)] bg-fixed bg-no-repeat bg-cover  ">
       <NavLinks />
-      {data?.map((blog) => {
+      {data?.map((blog) => {    // i have made it optional cuz if no blog existed on website then it shouldn't throw error instead should show a message like i did in "/myblogs" route
         return <BlogCard
           key={blog.id}
           username={blog.author.username}
           datePublished={blog.publishedAt}
-          title={blog.title}
+          title={blog.title} 
+          brief={blog.brief}
           content={blog.content}
           blogID={blog.id}
+          tags={blog.postTag}
         ></BlogCard>
       })
       }
     </div>
   } else {
-   return  <UnAuth/>
+    return <UnAuth />
   }
 }

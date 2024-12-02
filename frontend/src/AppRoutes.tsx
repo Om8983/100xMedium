@@ -7,6 +7,7 @@ import { Protected } from './pages/Protected'
 import { Post } from './pages/Post'
 import { UserProfile } from './pages/UserProfile'
 import { MyBlogs } from './pages/MyBlogs'
+import { WriteBlog } from './pages/WriteBlog'
 
 export const AppRoutes = () => {
   return (
@@ -23,8 +24,7 @@ export const AppRoutes = () => {
         <Route path='/myblogs' element={<MyBlogs />}></Route>
         {/* user profile */}
         <Route path='/userProfile' element={<UserProfile />}></Route>
-
-
+        <Route path='/editor' element={<WriteBlog/>}></Route>
       </Routes>
     </>
   )

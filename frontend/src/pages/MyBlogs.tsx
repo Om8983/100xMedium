@@ -2,9 +2,9 @@ import { useRecoilValue, useRecoilValueLoadable } from "recoil"
 import { UserBlogs } from "../store/atoms/blogFetchAtom"
 import { UnAuth } from "../components/UnAuth"
 import { userId } from "../store/atoms/userInfoAtom"
-import { NavLinks } from "../components/NavLinks"
 import { BlogCard } from "../components/BlogCard"
-
+import { NavLinks } from "../components/NavBar/NavLinks"
+import { JSONContent } from "@tiptap/react"
 
 export const MyBlogs = () => {
     const id = useRecoilValue(userId)
@@ -18,17 +18,18 @@ export const MyBlogs = () => {
         if (blogPost.contents === undefined) {
             return <UnAuth />
         } else {
-            type Blog = {
-                id: string,
-                title: string,
-                content: string,
-                published: boolean,
-                publishedAt: string,
-                author_id: string
-            }
             type Post = {
-                username: string,
-                post: Blog[]
+                username: string;
+                post: {
+                    id: string;
+                    title: string;
+                    brief: string;
+                    content: JSONContent;
+                    published: boolean;
+                    publishedAt: string;
+                    author_id: string;
+                    postTag: string[];
+                }[];
             }
             const user: Post = blogPost.contents.user
 
@@ -41,26 +42,28 @@ export const MyBlogs = () => {
                                 <div className="flex justify-center items-center font-serif mt-5"> No Blogs Written Yet!! </div>
                             </div>
                             :
-                            <div className=" flex flex-col gap-2 items-center w-screen min-h-screen bg-[url(/paper.png)] bg-fixed bg-no-repeat bg-cover  ">
-                                <NavLinks />
-                                {
-                                    user.post.map((blog) => {
-                                        return (
-                                            <>
-                                                <BlogCard
-                                                    key={blog.id}
-                                                    username={"hi"}
-                                                    datePublished={blog.publishedAt}
-                                                    title={blog.title}
-                                                    content={blog.content}
-                                                    blogID={blog.id}
-                                                />
-                                            </>
-                                        )
-                                    })
-                                }
-                            </div>
-
+                            <>
+                                <div className=" flex flex-col gap-2 items-center w-screen min-h-screen bg-[url(/paper.png)] bg-fixed bg-no-repeat bg-cover  ">
+                                    <NavLinks />
+                                    {
+                                        user.post.map((blog) => {
+                                            return (
+                                                <div key={blog.id}>
+                                                    <BlogCard
+                                                        username={user.username}
+                                                        datePublished={blog.publishedAt}
+                                                        title={blog.title}
+                                                        brief={blog.brief}
+                                                        content={blog.content}
+                                                        blogID={blog.id}
+                                                        tags={blog.postTag}
+                                                    />
+                                                </div>
+                                            )
+                                        })
+                                    }
+                                </div>
+                            </>
                     }
                 </>
             )

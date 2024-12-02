@@ -2,9 +2,9 @@ import { useRecoilValueLoadable } from "recoil"
 import { BlogPostData } from "../store/atoms/blogFetchAtom"
 import { useNavigate, useParams } from "react-router-dom"
 import { BlogPostSkeleton } from "../components/BlogPostSkeleton"
-import { NavLinks } from "../components/NavLinks"
 import { Blog } from "../components/Blog"
-
+import { NavLinks } from "../components/NavBar/NavLinks"
+import { JSONContent } from "@tiptap/react"
 export const Post = () => {
 
     const navigate = useNavigate();
@@ -43,7 +43,17 @@ export const Post = () => {
                 </>
             )
         } else {
-            const { blog } = blogLoadable.contents
+            type Blog = { 
+                title : string
+                brief : string
+                content : JSONContent
+                publishedAt : string
+                author : {
+                    username: string
+                }
+            }
+            const blog : Blog= blogLoadable.contents.blog
+
             return (
                 <>
                     {
@@ -53,9 +63,9 @@ export const Post = () => {
                             <Blog
                                 username={blog?.author.username}
                                 title={blog?.title}
+                                brief={blog.brief}
                                 content={blog?.content}
                                 publishedAt={blog?.publishedAt}
-                                imageURL={blog?.imageURL || null}
                             />
                         </div>
                     }

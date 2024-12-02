@@ -1,4 +1,4 @@
-import { GOOGLE_AUTH_URL } from "../config";
+import { GOOGLE_AUTH_URL } from "../../config"
 
 type Prop = {
     accType: "Login" | "SignUp";

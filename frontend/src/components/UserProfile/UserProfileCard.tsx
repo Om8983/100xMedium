@@ -1,14 +1,14 @@
 
 import { useNavigate } from "react-router-dom"
-import CountDown from "./CountDown"
 import { useRecoilValue } from "recoil"
-import { verifiedEmail } from "../store/atoms/userInfoAtom"
-import { UserEmailProfile } from "./UserEmailProfile"
 import { useState } from "react"
 import { UserUpdate } from "@om_wadhi/common"
-import { NavLinks } from "./NavLinks"
 import axios, { AxiosError } from "axios"
-import { USERS_BACKEND_URL } from "../config"
+import { USERS_BACKEND_URL } from "../../config"
+import { UserEmailProfile } from "./UserEmailProfile"
+import { verifiedEmail } from "../../store/atoms/userInfoAtom"
+import CountDown from "../Counter/CountDown"
+import { NavLinks } from "../NavBar/NavLinks"
 
 type Props = {
     username: string
@@ -23,6 +23,7 @@ export const UserProfileCard = ({ username, email, onClickLogout, onClickSendOtp
     const navigate = useNavigate();
     const [edit, setEdit] = useState(false)
     const verified = useRecoilValue(verifiedEmail)
+    
     const [changes, setChanges] = useState<UserUpdate>({
         username: username,
         email: email
@@ -45,7 +46,7 @@ export const UserProfileCard = ({ username, email, onClickLogout, onClickSendOtp
                 fieldUpdate.email = changes.email
             }
             if (changes.username === username && changes.email === email) {
-                console.log("No changes were made ");
+                // console.log("No changes were made "); instead you can add a custom popup containing
                 setEdit(false)
                 return
             }
@@ -80,7 +81,7 @@ export const UserProfileCard = ({ username, email, onClickLogout, onClickSendOtp
 
                 <div className="flex flex-col items-center md:grid md:grid-cols-4 mt-5 lg:mt-24 ">
                     {/* user img */}
-                    <div className="w-32 h-32 bg-orange-50 rounded-full outline-none col-span-2 col-start-1 md:mx-auto md:w-44 md:h-44 lg:w-[14rem] lg:h-[14rem]">
+                    <div className="w-32 h-32 bg-orange-50 rounded-full outline-none col-span-2 col-start-1 md:mx-auto md:w-44 md:h-44 lg:w-[14rem] lg:h-[14rem] overflow-hidden">
                         <img src="/user.svg" alt="userImg" />
                     </div>
 

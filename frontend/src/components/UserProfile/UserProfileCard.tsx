@@ -88,7 +88,7 @@ export const UserProfileCard = ({ username, email, onClickLogout, onClickSendOtp
                     {/* details */}
                     <div className="flex flex-col items-center ">
                         {/* edit profile btn */}
-                        <button className="bg-orange-200 self-center px-2 py-1 rounded-md text-sm font-serif font-medium mt-5 md:mt-6 lg:text-base lg:px-3" onClick={() => setEdit(true)} >
+                        <button className="bg-[#ececec] self-center px-2 py-1 rounded-md text-sm font-serif font-medium mt-5 md:mt-6 lg:text-base lg:px-3" onClick={() => setEdit(true)} >
                             Edit Profile
                         </button>
 
@@ -96,10 +96,10 @@ export const UserProfileCard = ({ username, email, onClickLogout, onClickSendOtp
                         {
                             edit &&
                             <div className="flex gap-5">
-                                <button className="bg-orange-200 px-3 py-1 rounded-md text-sm font-serif font-medium mt-4 md:mt-3 lg:mt-5 lg:text-base lg:px-2" onClick={handleSave} >
+                                <button className="bg-[#ececec] px-3 py-1 rounded-md text-sm font-serif font-medium mt-4 md:mt-3 lg:mt-5 lg:text-base lg:px-2" onClick={handleSave} >
                                     Save
                                 </button>
-                                <button className="bg-orange-200 px-2 py-1 rounded-md text-sm font-serif font-medium mt-4 md:mt-3 lg:mt-5 lg:text-base lg:px-2" onClick={() => setEdit(false)} >
+                                <button className="bg-[#ececec] px-2 py-1 rounded-md text-sm font-serif font-medium mt-4 md:mt-3 lg:mt-5 lg:text-base lg:px-2" onClick={() => setEdit(false)} >
                                     Cancel
                                 </button>
                             </div>
@@ -111,7 +111,7 @@ export const UserProfileCard = ({ username, email, onClickLogout, onClickSendOtp
                         {/* verify btn*/}
                         {
                             !verified && !box &&
-                            <button className="bg-orange-200 px-2 py-1 self-center rounded-md text-sm font-serif font-medium mt-5 md:mt-6 lg:text-base" onClick={onClickSendOtp} >
+                            <button className="bg-[#ececec] px-2 py-1 self-center rounded-md text-sm font-serif font-medium mt-5 md:mt-6 lg:text-base" onClick={onClickSendOtp} >
                                 Verify Email
                             </button>
                         }

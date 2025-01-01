@@ -5,13 +5,14 @@ import { userId } from "../store/atoms/userInfoAtom"
 import { BlogCard } from "../components/BlogCard"
 import { NavLinks } from "../components/NavBar/NavLinks"
 import { JSONContent } from "@tiptap/react"
+import { Wobble } from "../components/Loader/Wobble"
 
 export const MyBlogs = () => {
     const id = useRecoilValue(userId)
     const blogPost = useRecoilValueLoadable(UserBlogs(id))
 
     if (blogPost.state === "loading") {
-        return <p>Loading Blogs...</p>
+        return <Wobble></Wobble>
     } else if (blogPost.state === "hasError") {
         alert("Unexpected Error Occured")
     } else if (blogPost.state === "hasValue") {
@@ -32,7 +33,7 @@ export const MyBlogs = () => {
                 }[];
             }
             const user: Post = blogPost.contents.user
-
+            
             return (
                 <>
                     {

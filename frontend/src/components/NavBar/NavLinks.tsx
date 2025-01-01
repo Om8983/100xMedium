@@ -103,6 +103,7 @@ export const NavLinks = ({ className }: Prop) => {
                                                 <DropdownOpt onclick={() => navigate("/userProfile")} text="User Profile" svg="/user.svg" />
                                                 <DropdownOpt onclick={() => navigate("/editor")} text="Create Blog" svg="/blogWrite.svg" className="md:hidden" />
                                                 <DropdownOpt onclick={() => navigate("/myblogs")} text="My Blogs" svg="/blog.svg" />
+                                                <DropdownOpt onclick={() => navigate("/savedBlogs")} text="Saved Blogs" svg="/saved.svg" />
                                                 <DropdownOpt onclick={handleLogout} text="Log Out" svg="/logout.svg" />
                                             </div>
                                         </div>

@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom"
 import { useAuth } from "../hooks/authHook";
 import { useEffect } from "react";
+import { Wobble } from "../components/Loader/Wobble";
 
 export const Protected = () => {
     const navigate = useNavigate();
@@ -21,7 +22,7 @@ export const Protected = () => {
 
     if (loading === true) {
         return (
-            <div>Loading animation</div>
+            <Wobble></Wobble>
         )
     }
 }

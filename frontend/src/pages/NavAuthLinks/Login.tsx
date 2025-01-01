@@ -7,6 +7,7 @@ import { LoginSchema } from "@om_wadhi/common"
 import { useState } from "react"
 import { USERS_BACKEND_URL } from "../../config"
 import { GoogleBtn } from "../../components/Buttons/GoogleBtn"
+import { motion } from "motion/react"
 
 
 export const Login = () => {
@@ -46,27 +47,51 @@ export const Login = () => {
       }
     }
   }
+  const variant = {
+    initial: { opacity: 0, y: 30 },
+    animate: { opacity: 1, y: 0, transition : {duration : 0.5, ease : "easeInOut"} }
+  }
   return (
     <>
       <div className="grid lg:grid-cols-2 h-screen gap-6 bg-[#011e2b]">
         <div className="flex flex-col justify-center items-center gap-3 ">
           <div className="flex flex-col gap-2 mb-7">
-            <h1 className="text-center font-semibold text-4xl font-[myfont] text-white ">Login To Your Account</h1>
-            <p className="text-center text-gray-500 inline-block">Don't have an account ?<span className=" pl-2 cursor-pointer text-gray-500  underline " onClick={() => RedirectLogin()} >Sign Up
-              <img src="redirect.svg" alt="redirect btn" className="inline-block w-4 h-4 ml-1 pb-[2px]" />
-            </span> </p>
+            <motion.h1 variants={variant} initial={'initial'} animate={"animate"} className="text-center font-semibold text-4xl font-[myfont] text-white ">
+              Login To Your Account
+            </motion.h1>
+            <motion.p variants={variant} initial={'initial'} animate={"animate"} className="text-center text-gray-500 inline-block">
+              Don't have an account ?
+              <span className=" pl-2 cursor-pointer text-gray-500  underline " onClick={() => RedirectLogin()} >
+                Sign Up
+                <img src="redirect.svg" alt="redirect btn" className="inline-block w-4 h-4 ml-1 pb-[2px]" />
+              </span>
+            </motion.p>
           </div>
 
           <div className="flex flex-col gap-3">
             <div className="flex flex-col">
-              <label htmlFor="email" className="text-gray-500">Email</label>
-              <InputBox type="email" setValue={setEmail} id="email" placeholder="example@gmail.com"></InputBox>
+              <motion.label variants={variant} initial={'initial'} animate={"animate"} htmlFor="email" className="text-gray-500">
+                Email
+              </motion.label>
+              <InputBox
+                type="email"
+                setValue={setEmail}
+                id="email"
+                placeholder="example@gmail.com"></InputBox>
 
             </div>
 
             <div className="flex flex-col">
-              <label htmlFor="password" className="text-gray-500">Password</label>
-              <InputBox type="password" setValue={SetPass} id="password" placeholder="********"></InputBox>
+              <motion.label variants={variant} initial={'initial'} animate={"animate"}
+                htmlFor="password"
+                className="text-gray-500">
+                Password
+              </motion.label>
+              <InputBox
+                type="password"
+                setValue={SetPass}
+                id="password"
+                placeholder="********"></InputBox>
             </div>
           </div>
 

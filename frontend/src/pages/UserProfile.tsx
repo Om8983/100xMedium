@@ -8,6 +8,7 @@ import { token } from "../store/atoms/otpAtoms"
 import { useState } from "react"
 import { userProfile } from "../store/atoms/userData"
 import { UserProfileCard } from "../components/UserProfile/UserProfileCard"
+import { Wobble } from "../components/Loader/Wobble"
 
 export const UserProfile = () => {
     const setUserLogin = useSetRecoilState(userLoginAtom)
@@ -81,7 +82,7 @@ export const UserProfile = () => {
     }
 
     if (userData.state === "loading") {
-        return <p>loading,...</p>
+        return <Wobble></Wobble>
     } else if (userData.state === "hasError") {
         alert("internal server issue ")
     } if (userData.state === "hasValue") {

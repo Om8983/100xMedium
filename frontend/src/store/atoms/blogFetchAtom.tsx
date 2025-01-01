@@ -1,9 +1,6 @@
 import axios, { AxiosError } from "axios";
 import { selectorFamily } from "recoil";
 import { BLOGS_BACKEND_URL, USERS_BACKEND_URL } from "../../config";
-// let me clear you when should you use recoil 
-// as we know recoil is a state management library 
-
 
 // all blogs on home page
 export const BlogPostData = selectorFamily({
@@ -37,6 +34,26 @@ export const UserBlogs = selectorFamily({
     get: (userId: string) => async () => {
         try {
             const res = await axios.get(`${USERS_BACKEND_URL}/myblogs?id=${userId}`, { withCredentials: true });
+            return res.data;
+
+        } catch (e) {
+            if (e instanceof AxiosError) {
+                if (e.response?.status === 401) {
+                    alert("User is Unauthorized")
+                } else {
+                    alert("Internal Server Error")
+                }
+            }
+        }
+    }
+})
+
+// user saved blogs
+export const UserSavedBlogs = selectorFamily({
+    key: "userSavedBlogAtom",
+    get: () => async () => {
+        try {
+            const res = await axios.get(`${BLOGS_BACKEND_URL}/savedBlogs`, { withCredentials: true });
             return res.data;
 
         } catch (e) {

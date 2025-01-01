@@ -8,7 +8,6 @@ import { NavLinks } from "../components/NavBar/NavLinks";
 
 export const Blogs = () => {
   const userLogin = useRecoilValue(userLoginAtom)
-
   // populating blogs
   const { data, loading } = useBulkBlog();
   if (userLogin === true) {
@@ -27,7 +26,7 @@ export const Blogs = () => {
           key={blog.id}
           username={blog.author.username}
           datePublished={blog.publishedAt}
-          title={blog.title} 
+          title={blog.title}
           brief={blog.brief}
           content={blog.content}
           blogID={blog.id}

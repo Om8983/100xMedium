@@ -61,7 +61,8 @@ const accessTokenValidation = async (c: Context, next: () => Promise<void>) => {
         ACCESSTOKEN_SECRET: c.env.ACCESSTOKEN_SECRET,
       });
 
-      return c.json({ msg: "Access approved", user: user }, 200);
+      // return c.json({ msg: "Access approved", user: user }, 200);
+      await next();
     } catch (err) {
       return c.json({ msg: "Invalid refresh token" }, 401);
     }
@@ -205,8 +206,11 @@ router.get("/details", accessTokenValidation, async (c) => {
   // 1. Initializing Prisma Client
   const { prisma } = prismaInstance(c);
 
-  const { id } = c.req.query();
   try {
+    const { id } = c.req.query();
+    if(id === undefined){
+      return c.json({msg : "User Id Doesn't exist"})
+    }
     // Getting accessToken from cookies
     const accessToken = getCookie(c, "accessToken");
     try {
@@ -228,7 +232,7 @@ router.get("/details", accessTokenValidation, async (c) => {
         return c.json({ success: "true", user: user }, 200);
       }
     } catch (e) {
-      return c.json({ msg: "Invalid AccessTOken" }, 401);
+      return c.json({ msg: "Invalid AccessToken" }, 401);
     }
   } catch (error) {
     return c.json({ msg: "Internal Server Error" }, 500);

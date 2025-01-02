@@ -14,23 +14,33 @@ datasource db {
 }
 
 model User {
-  id        String   @id @unique @default(uuid())
-  email     String   @unique
-  verified  Boolean? @default(false)
-  username  String
-  google_id String?
-  password  String?
-  posts     Post[]
+  id         String       @id @unique @default(uuid())
+  email      String       @unique
+  verified   Boolean?     @default(false)
+  username   String
+  google_id  String?
+  password   String?
+  posts      Post[]
+  SavedBlogs SavedBlogs[]
 }
 
 model Post {
-  id          String  @id @unique @default(uuid())
+  id          String       @id @unique @default(uuid())
   title       String
   brief       String?
   content     Json
-  published   Boolean @default(false)
+  published   Boolean      @default(false)
   publishedAt String
-  author      User    @relation(fields: [author_id], references: [id])
+  author      User         @relation(fields: [author_id], references: [id])
   author_id   String
   postTag     String[]
+  SavedBlogs  SavedBlogs[]
+}
+
+model SavedBlogs {
+  id       String @id @unique @default(uuid())
+  user     User   @relation(fields: [userId], references: [id])
+  userId String
+  post     Post   @relation(fields: [postId], references: [id])
+  postId   String
 }

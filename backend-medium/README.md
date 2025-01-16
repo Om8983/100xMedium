@@ -19,3 +19,5 @@ In blog.routes the middleware was defined globally because if you see the differ
  -->
 
 <!--  Now the problem is, I am creating /savedBlogs route. This route would return blogs saved by the user. Since it is related to the user i thought this should be defined within the user.routes since its related to the user-particular info. But her  -->
+
+<!-- Main thing about prisma is, the reason why a field in particular model is declared to be @unique because for queries where a we find the field with the findUnique or any other query, the unique id needs to be mentioned -->

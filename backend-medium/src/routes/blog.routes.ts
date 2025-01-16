@@ -227,22 +227,16 @@ router.get("/bulk", async (c) => {
   // using cursor-based pagination for quick and efficient fetches.
   // read Readme.md to know more about cursor based pagination and why and how is it used here.
   const allBlog = await prisma.post.findMany(cursor ? cursorQuery : query);
-  const blogs = allBlog.map((blog) => {
-    return {
-      ...blog,
-      isSaved: blog.SavedBlogs.length > 0 ? true : false,
-    };
-  });
-  if (blogs.length === 0) {
+  if (allBlog.length === 0) {
     return c.json({ msg: "No blogs are posted" }, 200);
   }
 
   return c.json(
     {
       msg: "success",
-      blogs,
-      nextCursor: blogs.length === 5 ? blogs[blogs.length - 1].id : null,
-      hasMore: blogs.length === parseInt(limit),
+      allBlog,
+      nextCursor: allBlog.length === 5 ? allBlog[allBlog.length - 1].id : null,
+      hasMore: allBlog.length === parseInt(limit),
     },
     200
   );
@@ -272,31 +266,39 @@ router.get("/searchBlog", async (c) => {
 router.post("/save/:id", async (c) => {
   try {
     const { prisma } = prismaInstance(c);
-    const id = c.req.param("id");
+    const postId = c.req.param("id");
     const authorId = c.get("authorId");
-    const alreadySaved = await prisma.savedBlogs.findFirst({
-      where: {
-        postId: id,
-      },
-      select: {
-        id: true,
-      },
-    });
-    if (alreadySaved) {
-      const remove = await prisma.savedBlogs.delete({
+    const result = await prisma.$transaction(async (tsx) => {
+      const alreadySaved = await tsx.savedBlogs.findFirst({
         where: {
-          id: alreadySaved.id,
+          postId: postId,
+          userId: authorId,
+        },
+        select: {
+          id: true,
         },
       });
-      return c.json({ msg: "unsaved" }, 200);
-    }
-    const save = await prisma.savedBlogs.create({
-      data: {
-        userId: authorId,
-        postId: id,
-      },
+      if (alreadySaved) {
+        const deleteSavedId = await tsx.savedBlogs.delete({
+          where: {
+            postId_userId: {
+              postId: postId,
+              userId: authorId,
+            },
+          },
+        });
+        return { msg: "unsaved" };
+      } else {
+        const createSavedId = await tsx.savedBlogs.create({
+          data: {
+            userId: authorId,
+            postId: postId,
+          },
+        });
+        return { msg: "saved" };
+      }
     });
-    return c.json({ msg: "saved" }, 200);
+    return c.json({ msg: "success", result }, 200);
   } catch (e) {
     return c.json({ msg: "Internal Server Error" }, 500);
   }
@@ -324,6 +326,123 @@ router.get("/savedBlogs", async (c) => {
     return c.json({ msg: "success", savedBlogs }, 200);
   } catch (e) {
     return c.json({ msg: "Internal Server Error" }, 500);
+  }
+});
+
+router.post("/upvote", async (c) => {
+  const authorId = c.get("authorId");
+  const { prisma } = prismaInstance(c);
+  const blogId = c.req.query("blogId");
+  try {
+    // initially i've created 2 transaction 1 for deleting and other for creating upvote.But to avoid the race conditions, i've bundled them in single transaction & which is also useful to reduce the roundtrips to the database. "tsx" means a single transaction for the whole conditional i.e a single roundtrip to the db server.
+    const result = await prisma.$transaction(async (tsx) => {
+      const existingLike = await prisma.upvotes.findUnique({
+        where: {
+          userId_postId: {
+            // since we have declare the userId & the postId as unique
+            userId: authorId,
+            postId: blogId as string,
+          },
+        },
+      });
+      if (existingLike) {
+        // removing user's upvote from the upvote model for that particular post and then decrementing like
+
+        const deleteUpvoteId = await tsx.upvotes.delete({
+          // deletes the user like from the upvotes field of the user.
+          where: {
+            userId_postId: {
+              userId: authorId,
+              postId: blogId as string,
+            },
+          },
+        });
+        const devote = await tsx.post.update({
+          // decrements the likeCount for post by 1
+          where: {
+            id: blogId,
+          },
+          data: {
+            likeCount: { decrement: 1 },
+          },
+          select: {
+            likeCount: true,
+          },
+        });
+
+        const data = {
+          isLiked: false,
+          likeCount: devote.likeCount,
+        };
+        return data;
+      } else {
+        // making an entry for the user liked post and incrementing the likeCount by 1 for that post
+        const createUpvoteId = await tsx.upvotes.create({
+          data: {
+            userId: authorId,
+            postId: blogId as string,
+          },
+        });
+        const upvote = await tsx.post.update({
+          where: {
+            id: blogId,
+          },
+          data: {
+            likeCount: { increment: 1 },
+          },
+          select: {
+            likeCount: true,
+          },
+        });
+
+        const data = {
+          isLiked: true,
+          likeCount: upvote.likeCount,
+        };
+        return data;
+      }
+    });
+    return c.json({ msg: "success", result }, 200);
+  } catch (e) {
+    return c.json({ msg: "Internal Server Issue" }, 500);
+  }
+});
+router.post("/metadata", async (c) => {
+  const { prisma } = prismaInstance(c);
+  const authorId = c.get("authorId");
+  //  is an array of ids seperated in batches
+  const { blogId } = await c.req.json();
+  const ids = blogId.map((item: { id: string }) => item.id);
+
+  try {
+    const metadata = await prisma.post.findMany({
+      where: {
+        id: {
+          in: ids,
+        },
+      },
+      select: {
+        id: true,
+        likeCount: true,
+        SavedBlogs: {
+          where: {
+            userId: authorId,
+          },
+          select: {
+            postId: true,
+          },
+        },
+      },
+    });
+    const blogMetadata = metadata.map((blogdata) => {
+      return {
+        ...blogdata,
+        isSaved: blogdata.SavedBlogs.length >= 1 ? true : false,
+      };
+    });
+    return c.json({ msg: "success", blogMetadata }, 200);
+  } catch (e) {
+    return c.json({ msg: "Internal Server errror" }, 500);
   }
 });
 export default router;

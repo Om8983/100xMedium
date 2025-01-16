@@ -22,6 +22,7 @@ model User {
   password   String?
   posts      Post[]
   SavedBlogs SavedBlogs[]
+  Upvote     Upvotes[]
 }
 
 model Post {
@@ -34,13 +35,27 @@ model Post {
   author      User         @relation(fields: [author_id], references: [id])
   author_id   String
   postTag     String[]
+  likeCount   Int          @default(0)
   SavedBlogs  SavedBlogs[]
+  Upvote      Upvotes[]
 }
 
 model SavedBlogs {
-  id       String @id @unique @default(uuid())
-  user     User   @relation(fields: [userId], references: [id])
+  id     String @id @default(uuid())
+  user   User   @relation(fields: [userId], references: [id])
   userId String
-  post     Post   @relation(fields: [postId], references: [id])
-  postId   String
+  post   Post   @relation(fields: [postId], references: [id])
+  postId String
+
+  @@unique([postId, userId])
+}
+
+model Upvotes {
+  id     String @id @default(uuid())
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+  post   Post   @relation(fields: [postId], references: [id])
+  postId String
+
+  @@unique([userId, postId])
 }

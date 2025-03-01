@@ -15,7 +15,7 @@ type Props = {
     email: string
     onClickLogout: () => void
     onClickSendOtp: () => void
-    box: Boolean
+    box: boolean
     onClickVerify: () => void
 }
 export const UserProfileCard = ({ username, email, onClickLogout, onClickSendOtp, box, onClickVerify }: Props) => {

@@ -66,9 +66,9 @@ export const NavLinks = ({ className }: Prop) => {
                     {/* logo */}
                     <div className="flex justify-center items-center">
                         <li>
-                        <a href="/" className="border-none outline-none  ">
-                            <img src="/logo.svg" alt="logo" className=" w-[120px] border-none outline-none " />
-                        </a>
+                            <button onClick={() => navigate("/")} className="border-none outline-none  ">
+                                <img src="/logo.svg" alt="logo" className=" w-[120px] border-none outline-none " />
+                            </button>
                         </li>
                     </div>
                     {/* search Bar */}

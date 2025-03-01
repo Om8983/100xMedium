@@ -114,3 +114,21 @@ This same functionality could also be performed using "splice" method -->
 For this when we convert the json received data from backend to html, on frontend, we need to specify extensions in order to get all the data that is dependent on that extension be loaded. 
 Also for codeblocks, the classes are being removed during conversion. Hence the useEffect() that i use, is supposed to get the "pre code" elements via queryselector and add the highlightjs class to it. 
 The reason why we are using useEffect() is while applying the classes for highlight js, if has any side-effects, those must be avoided. -->
+
+
+<!-- Infinite Scrolling jargons -->
+<!-- 1. documentElement : if you see the docs you'll find properties named Element.scrollHeight, Element.offsetWidth etc. This "Element" is the element present within the document i.e. the main document or the root. Similarly "documentElement"  means we are targetting the root element of the document since we want the root elements height. 
+
+2. offsetHeight :: We have seen offsetHeight before when creating the "follower" in framer-motion/1-framer. The offsetHeight basically gives the height of the element including padding, border etc but excluding the "margin" of the element. Here rather targeting a single element we are targetting the entire documentElement, so we will get the total height of the documentElement.
+
+3. scrollTop :: scrollTop determines how much the tagetted element is being scrolled from the top 
+
+4. window.innerHeight :: it returns the height of the window including the scrollbar height. 
+5. window.outerHeight :: it return the whole browser` window height including the topbar, that includes bookmarkbar, tabbar etc... -->
+
+<!-- alternate way to filter the ids ( you can find this line in Blogs.tsx useEffect()) -->
+<!-- const filtered = newIdBatch.filter((item) => !prev.some(existingId => existingId.id === item.id)) -->
+
+<!-- debounceLike()  -->
+<!-- i have used debounceLike to delay the like function call becuase previously I was facing issues if a user tries to simultaneously hit the like button which could lead to potential issues on the backend or far more taking the backend server down. 
+To avoid the concurrent request to backend i added a debounced function which would delay the post like function call to the backend.  -->

@@ -2,6 +2,34 @@ import axios, { AxiosError } from "axios";
 import { selectorFamily } from "recoil";
 import { BLOGS_BACKEND_URL, USERS_BACKEND_URL } from "../../config";
 
+// all blogs 
+export const AllBlogs = selectorFamily({
+    key: "allBlogs",
+    get: ({ limit, cursor }: { limit: number, cursor?: string | null }) => async () => {
+        try {
+            const res = await axios.get(`${BLOGS_BACKEND_URL}/bulk`, { params: cursor ? { limit: limit, cursor: cursor } : { limit: limit }, withCredentials: true })
+
+            if (res.status === 200) {
+                return res.data;
+            }
+        } catch (e) {
+            if (e instanceof AxiosError) {
+                if (e.response?.status === 401) {
+                    return {
+                        data : null,
+                        errorStatus : 401
+                    }
+                } else {
+                    return { 
+                        data : null,
+                        errorStatus : 500
+                    }
+                }
+            }
+        }
+    }
+})
+
 // all blogs on home page
 export const BlogPostData = selectorFamily({
     key: "blogPost/default",
@@ -15,10 +43,10 @@ export const BlogPostData = selectorFamily({
             if (e instanceof AxiosError) {
                 if (e.response?.status === 401) {
                     console.error("Unauthorized user")
-                    return
+                    return;
                 } else {
                     console.error("internal server error", e);
-                    return
+                    return;
                 }
             }
         }
@@ -32,6 +60,7 @@ export const BlogPostData = selectorFamily({
 export const UserBlogs = selectorFamily({
     key: "userBlogAtom",
     get: (userId: string) => async () => {
+        if (!userId) return null;
         try {
             const res = await axios.get(`${USERS_BACKEND_URL}/myblogs?id=${userId}`, { withCredentials: true });
             return res.data;
@@ -40,30 +69,14 @@ export const UserBlogs = selectorFamily({
             if (e instanceof AxiosError) {
                 if (e.response?.status === 401) {
                     alert("User is Unauthorized")
+                    return;
                 } else {
                     alert("Internal Server Error")
+                    return;
                 }
             }
         }
+        return;
     }
 })
 
-// user saved blogs
-export const UserSavedBlogs = selectorFamily({
-    key: "userSavedBlogAtom",
-    get: () => async () => {
-        try {
-            const res = await axios.get(`${BLOGS_BACKEND_URL}/savedBlogs`, { withCredentials: true });
-            return res.data;
-
-        } catch (e) {
-            if (e instanceof AxiosError) {
-                if (e.response?.status === 401) {
-                    alert("User is Unauthorized")
-                } else {
-                    alert("Internal Server Error")
-                }
-            }
-        }
-    }
-})

@@ -40,10 +40,6 @@ export const Home = () => {
             transition: {
                 staggerChildren: 0.2,
                 duration : 0.3
-                // type: 'spring',
-                // stiffness: 100,
-                // damping: 12,
-                // restDelta: 0.015
             }
         }
     }

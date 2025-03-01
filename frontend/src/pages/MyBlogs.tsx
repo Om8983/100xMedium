@@ -33,7 +33,6 @@ export const MyBlogs = () => {
                 }[];
             }
             const user: Post = blogPost.contents.user
-            
             return (
                 <>
                     {

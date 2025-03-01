@@ -66,7 +66,7 @@ export const Blogs = () => {
     return () => window.removeEventListener("scroll", handleScroll)
   }, [blogData.contents, loading])
 
-  const { metadata, loadingMetadata } = useMetadata(ids)
+  const { metadata } = useMetadata(ids)
 
   // data.length === 0 because only on first load the 3 skeleton cards must be visible. And when new blogs are yet to load while scroll then single skeleton must be shown which is coded at bottom of this
   if (blogData.state === "loading" && data.length === 0) {

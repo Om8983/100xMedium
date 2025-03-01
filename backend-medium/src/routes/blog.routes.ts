@@ -287,7 +287,7 @@ router.post("/save/:id", async (c) => {
             },
           },
         });
-        return { msg: "unsaved" };
+        return { saved: false };
       } else {
         const createSavedId = await tsx.savedBlogs.create({
           data: {
@@ -295,10 +295,10 @@ router.post("/save/:id", async (c) => {
             postId: postId,
           },
         });
-        return { msg: "saved" };
+        return { saved: true };
       }
     });
-    return c.json({ msg: "success", result }, 200);
+    return c.json({ msg: "success", postSaved : result.saved }, 200);
   } catch (e) {
     return c.json({ msg: "Internal Server Error" }, 500);
   }

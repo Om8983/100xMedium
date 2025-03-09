@@ -30,7 +30,6 @@ export const AllBlogs = selectorFamily({
     }
 })
 
-// all blogs on home page
 export const BlogPostData = selectorFamily({
     key: "blogPost/default",
     get: (id: string) => async () => {

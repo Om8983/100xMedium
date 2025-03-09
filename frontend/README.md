@@ -132,3 +132,9 @@ The reason why we are using useEffect() is while applying the classes for highli
 <!-- debounceLike()  -->
 <!-- i have used debounceLike to delay the like function call becuase previously I was facing issues if a user tries to simultaneously hit the like button which could lead to potential issues on the backend or far more taking the backend server down. 
 To avoid the concurrent request to backend i added a debounced function which would delay the post like function call to the backend.  -->
+
+
+
+
+
+<!-- about the recoil values for the specific blog evaluation in the blogcard component -->

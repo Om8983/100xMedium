@@ -1,7 +1,7 @@
 
 import { useNavigate } from "react-router-dom"
 import { useRecoilValue } from "recoil"
-import { useState } from "react"
+import { useRef, useState } from "react"
 import { UserUpdate } from "@om_wadhi/common"
 import axios, { AxiosError } from "axios"
 import { USERS_BACKEND_URL } from "../../config"
@@ -23,12 +23,12 @@ export const UserProfileCard = ({ username, email, onClickLogout, onClickSendOtp
     const navigate = useNavigate();
     const [edit, setEdit] = useState(false)
     const verified = useRecoilValue(verifiedEmail)
-    
+
     const [changes, setChanges] = useState<UserUpdate>({
         username: username,
         email: email
     })
-    const [fieldUpdate, setUpdate] = useState<UserUpdate>({})
+    const fieldUpdate = useRef<UserUpdate>({})  // just because there's no need of setState() function by the useState hook so useRef
 
 
     const handleChange = (field: string, changedVal: string) => {
@@ -40,10 +40,10 @@ export const UserProfileCard = ({ username, email, onClickLogout, onClickSendOtp
     const handleSave = async () => {
         try {
             if (changes.username !== username) {
-                fieldUpdate.username = changes.username
+                fieldUpdate.current.username = changes.username
             }
             if (changes.email !== email) {
-                fieldUpdate.email = changes.email
+                fieldUpdate.current.email = changes.email
             }
             if (changes.username === username && changes.email === email) {
                 // console.log("No changes were made "); instead you can add a custom popup containing

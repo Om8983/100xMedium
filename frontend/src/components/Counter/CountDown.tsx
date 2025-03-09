@@ -1,6 +1,6 @@
 import { useState } from "react";
 import axios, { AxiosError } from "axios";
-import { useRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import { Counter } from "./Counter";
 import { USERS_BACKEND_URL } from "../../config";
 import { token } from "../../store/atoms/otpAtoms";
@@ -8,7 +8,7 @@ import { token } from "../../store/atoms/otpAtoms";
 const CountDown = (() => {
 
     const [isOver, setOver] = useState<boolean>(false)
-    const [otp, setOTP] = useRecoilState(token)
+    const setOTP = useSetRecoilState(token)
     const resetTimer = async () => {
         try {
             const res = await axios.get(`${USERS_BACKEND_URL}/getOtp`)

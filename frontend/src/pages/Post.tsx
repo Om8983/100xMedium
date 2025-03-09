@@ -51,6 +51,7 @@ export const Post = () => {
                 author : {
                     username: string
                 }
+                isSaved : boolean
             }
             const blog : Blog= blogLoadable.contents.blog
 
@@ -66,6 +67,7 @@ export const Post = () => {
                                 brief={blog.brief}
                                 content={blog?.content}
                                 publishedAt={blog?.publishedAt}
+                                isSaved={blog.isSaved}
                             />
                         </div>
                     }

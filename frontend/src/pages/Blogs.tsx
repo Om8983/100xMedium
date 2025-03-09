@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import { JSONContent } from "@tiptap/react";
 import { useMetadata } from "../hooks/metadata";
 
+
 export const Blogs = () => {
   interface Blog {
     id: string
@@ -65,8 +66,8 @@ export const Blogs = () => {
     window.addEventListener("scroll", handleScroll)
     return () => window.removeEventListener("scroll", handleScroll)
   }, [blogData.contents, loading])
-
-  const { metadata } = useMetadata(ids)
+  // fetching metadata each time when the ids change for received blogs. (5 blogs in each set, metadata is fetched and saved to recoil atom so that prop-drilling can be avoided.)
+  useMetadata(ids)
 
   // data.length === 0 because only on first load the 3 skeleton cards must be visible. And when new blogs are yet to load while scroll then single skeleton must be shown which is coded at bottom of this
   if (blogData.state === "loading" && data.length === 0) {
@@ -105,7 +106,6 @@ export const Blogs = () => {
             content={blog.content}
             blogID={blog.id}
             tags={blog.postTag}
-            metadata={metadata}
           ></BlogCard>
         })
       }

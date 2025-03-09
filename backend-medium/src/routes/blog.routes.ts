@@ -142,6 +142,8 @@ router.put("/updateBlog", updateBlogSchema, async (c) => {
 router.get("/id/:id", async (c) => {
   // initializing prisma client
   const { prisma } = prismaInstance(c);
+  // author id is userId currently logged-in
+  const authorId = c.get("authorId");
   // getting blog id
   const blogId = c.req.param("id");
   // creating new post
@@ -154,6 +156,14 @@ router.get("/id/:id", async (c) => {
       brief: true,
       content: true,
       publishedAt: true,
+      SavedBlogs: {
+        where: {
+          userId: authorId,
+        },
+        select: {
+          postId: true,
+        },
+      },
       author: {
         select: {
           id: true,
@@ -163,8 +173,13 @@ router.get("/id/:id", async (c) => {
       },
     },
   });
+
+  const blogPost = {
+    ...blog,
+    isSaved : blog?.SavedBlogs.length === 1 ? true : false
+  }
   // on success message
-  return c.json({ blog: blog }, 200);
+  return c.json({ blog: blogPost }, 200);
 });
 
 // populate all blogs
@@ -298,7 +313,7 @@ router.post("/save/:id", async (c) => {
         return { saved: true };
       }
     });
-    return c.json({ msg: "success", postSaved : result.saved }, 200);
+    return c.json({ msg: "success", postSaved: result.saved }, 200);
   } catch (e) {
     return c.json({ msg: "Internal Server Error" }, 500);
   }

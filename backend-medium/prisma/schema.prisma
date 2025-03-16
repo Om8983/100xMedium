@@ -64,9 +64,17 @@ model Upvotes {
 
 // refer to readme for why i did this
 model Relationships {
-  id           String  @id @unique @default(uuid())
+  id           String  @id @default(uuid())
   following    String?
   followers    String?
   followingIds User?   @relation("Following", fields: [following], references: [id])
   followerIds  User?   @relation("Followers", fields: [followers], references: [id])
+
+  @@unique([following, followers])
 }
+
+
+// just to let you know the @@unique  represents that the relation with the 2 should stay unique. There must not be any duplicate ones that already exist. 
+// For Ex. if a user has already upvoted for the post 
+// user1 --> post1 
+// then user one won't be able to again upvote rather it would be counted as devote and will be deleted from Upvotes 

@@ -14,15 +14,17 @@ datasource db {
 }
 
 model User {
-  id         String       @id @unique @default(uuid())
-  email      String       @unique
-  verified   Boolean?     @default(false)
+  id         String          @id @unique @default(uuid())
+  email      String          @unique
+  verified   Boolean?        @default(false)
   username   String
   google_id  String?
   password   String?
   posts      Post[]
   SavedBlogs SavedBlogs[]
   Upvote     Upvotes[]
+  Following  Relationships[] @relation("Following")
+  Followers  Relationships[] @relation("Followers")
 }
 
 model Post {
@@ -58,4 +60,13 @@ model Upvotes {
   postId String
 
   @@unique([userId, postId])
+}
+
+// refer to readme for why i did this
+model Relationships {
+  id           String  @id @unique @default(uuid())
+  following    String?
+  followers    String?
+  followingIds User?   @relation("Following", fields: [following], references: [id])
+  followerIds  User?   @relation("Followers", fields: [followers], references: [id])
 }

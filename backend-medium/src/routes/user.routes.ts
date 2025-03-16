@@ -408,4 +408,94 @@ router.get("/verifyOtp", async (c) => {
   }
 });
 
+router.post("/follow/:id", async (c) => {
+  // Initializing Prisma Client
+  const { prisma } = prismaInstance(c);
+  // accessing the id of the author to which user wants to follow
+  const authorId = c.req.param("id");
+  try {
+    //see if access token is present
+    const accessToken = getCookie(c, "accessToken");
+    const decodedData = await verify(
+      accessToken as string,
+      c.env.ACCESSTOKEN_SECRET
+    );
+
+    const userId = decodedData.id;
+
+    const result = await prisma.$transaction(async (tsx) => {
+      console.log("checkin already following");
+
+      const alreadyFollowing = await tsx.relationships.findFirst({
+        where: {
+          followers: authorId,
+          following: userId as string,
+        },
+        select: {
+          id: true,
+        },
+      });
+      console.log("alreadyFollowing", alreadyFollowing);
+
+      if (alreadyFollowing) {
+        console.log("author id is in following list of user. ");
+        const unfollow = await tsx.relationships.deleteMany({
+          where: {
+            id: alreadyFollowing.id,
+          },
+        });
+        return { msg: "author unfollow successfull !!" };
+      }
+
+      const userFollowing = await tsx.relationships.create({
+        data: {
+          followers: authorId,
+          following: userId as string,
+        },
+        select: {
+          followers: true,
+          following: true,
+        },
+      });
+
+      // now also need to update the followers of the author. Above we only added following to the userId.
+      // Nice thought but i will explain this in the readme file about how the schema was designed and how both the following of the user and the followers of the author gets incremented or decrement as user follows or unfollows respectively
+      return { msg: "author follow successfull !!" };
+    });
+    return c.json({ msg: "success", result }, 200);
+  } catch (e) {
+    return c.json({ msg: "Error while following author." }, 500);
+  }
+});
+
+router.get("/profile/stats", async (c) => {
+  // Initializing Prisma Client
+  const { prisma } = prismaInstance(c);
+  try {
+    //see if access token is present
+    const accessToken = getCookie(c, "accessToken");
+    const decodedData = await verify(
+      accessToken as string,
+      c.env.ACCESSTOKEN_SECRET
+    );
+
+    const userId = decodedData.id;
+    const userFollowersListCount = await prisma.user.findMany({
+      where: {
+        id: userId as string,
+      },
+      include: {
+        _count: {
+          select: { Followers: true, Following: true, posts : true },
+        },
+      },
+    });
+    return c.json(
+      { msg: "success", followerCount: userFollowersListCount },
+      200
+    );
+  } catch (e) {
+    return c.json({ msg: "error while fetching follower count" }, 500);
+  }
+});
 export default router;

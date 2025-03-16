@@ -7,7 +7,7 @@
   "dependencies": {
     "@hono/zod-validator": "^0.4.1",
     "@om_wadhi/common": "^1.2.4",
-    "@prisma/client": "^6.1.0",
+    "@prisma/client": "^6.5.0",
     "@prisma/extension-accelerate": "^1.2.1",
     "@types/bcryptjs": "^2.4.6",
     "axios": "^1.7.7",
@@ -18,7 +18,7 @@
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20241022.0",
     "otpauth": "^9.3.4",
-    "prisma": "^6.1.0",
-    "wrangler": "^3.83.0"
+    "prisma": "^6.5.0",
+    "wrangler": "^3.114.1"
   }
 }

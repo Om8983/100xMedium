@@ -207,10 +207,6 @@ router.get("/details", accessTokenValidation, async (c) => {
   const { prisma } = prismaInstance(c);
 
   try {
-    const { id } = c.req.query();
-    if(id === undefined){
-      return c.json({msg : "User Id Doesn't exist"})
-    }
     // Getting accessToken from cookies
     const accessToken = getCookie(c, "accessToken");
     try {
@@ -218,10 +214,12 @@ router.get("/details", accessTokenValidation, async (c) => {
         accessToken as string,
         c.env.ACCESSTOKEN_SECRET
       );
+      const userId = verifyToken.id;
+
       if (verifyToken) {
-        const user = await prisma.user.findFirst({
+        const user = await prisma.user.findUnique({
           where: {
-            id: id,
+            id: userId as string,
           },
           select: {
             username: true,

@@ -416,6 +416,9 @@ router.post("/follow/:id", async (c) => {
   try {
     //see if access token is present
     const accessToken = getCookie(c, "accessToken");
+    if (!accessToken) {
+      return c.json({ msg: "Unauthorized User" }, 404);
+    }
     const decodedData = await verify(
       accessToken as string,
       c.env.ACCESSTOKEN_SECRET
@@ -424,8 +427,6 @@ router.post("/follow/:id", async (c) => {
     const userId = decodedData.id;
 
     const result = await prisma.$transaction(async (tsx) => {
-      console.log("checkin already following");
-
       const alreadyFollowing = await tsx.relationships.findFirst({
         where: {
           followers: authorId,
@@ -435,16 +436,14 @@ router.post("/follow/:id", async (c) => {
           id: true,
         },
       });
-      console.log("alreadyFollowing", alreadyFollowing);
 
       if (alreadyFollowing) {
-        console.log("author id is in following list of user. ");
         const unfollow = await tsx.relationships.deleteMany({
           where: {
             id: alreadyFollowing.id,
           },
         });
-        return { msg: "author unfollow successfull !!" };
+        return false;
       }
 
       const userFollowing = await tsx.relationships.create({
@@ -460,9 +459,12 @@ router.post("/follow/:id", async (c) => {
 
       // now also need to update the followers of the author. Above we only added following to the userId.
       // Nice thought but i will explain this in the readme file about how the schema was designed and how both the following of the user and the followers of the author gets incremented or decrement as user follows or unfollows respectively
-      return { msg: "author follow successfull !!" };
+      return true;
     });
-    return c.json({ msg: "success", result }, 200);
+    if(!result){
+      return c.json({action : "Unfollow", state : "Success", result},200)
+    }
+    return c.json({action : "Follow", state : "Success"}, 200)
   } catch (e) {
     return c.json({ msg: "Error while following author." }, 500);
   }
@@ -486,7 +488,7 @@ router.get("/profile/stats", async (c) => {
       },
       include: {
         _count: {
-          select: { Followers: true, Following: true, posts : true },
+          select: { Followers: true, Following: true, posts: true },
         },
       },
     });

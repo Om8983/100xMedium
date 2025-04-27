@@ -25,3 +25,7 @@ In blog.routes the middleware was defined globally because if you see the differ
 <!-- Relationships in schema -->
 <!-- // https://stackoverflow.com/questions/67412355/cant-make-two-11-relations-in-one-model-in-prisma-ambiguous-relation-detected
 // refer to above stackoverflow if you have any question related to the following -->
+
+
+
+<!-- the logic behind addigng  -->

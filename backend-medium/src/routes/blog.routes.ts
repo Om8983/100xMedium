@@ -12,7 +12,7 @@ const router = new Hono<{
     REFRESHTOKEN_SECRET: string;
   };
   Variables: {
-    authorId: string;
+    userId: string;
   };
 }>();
 
@@ -51,14 +51,14 @@ router.use("*", async (c, next) => {
           },
           ACCESSTOKEN_SECRET: c.env.ACCESSTOKEN_SECRET,
         });
-        c.set("authorId", user.id);
+        c.set("userId", user.id);
         await next();
       } catch (e) {
         return c.json({ msg: "Invalid refresh token" }, 401);
       }
     } else {
       const user = await verify(accessToken, c.env.ACCESSTOKEN_SECRET);
-      c.set("authorId", user.id as string);
+      c.set("userId", user.id as string);
       await next();
     }
   } catch (e) {
@@ -67,7 +67,7 @@ router.use("*", async (c, next) => {
 });
 
 router.post("/createBlog", createBlogSchema, async (c) => {
-  const authorId = c.get("authorId");
+  const userId = c.get("userId");
   // initializing prisma client
   const { prisma } = prismaInstance(c);
 
@@ -81,7 +81,7 @@ router.post("/createBlog", createBlogSchema, async (c) => {
       title: title,
       content: content,
       brief: brief,
-      author_id: authorId,
+      author_id: userId,
       postTag: tag,
       publishedAt: new Date().toDateString(),
     },
@@ -106,7 +106,7 @@ router.post("/createBlog", createBlogSchema, async (c) => {
 
 // to update
 router.put("/updateBlog", updateBlogSchema, async (c) => {
-  const authorId = c.get("authorId");
+  const userId = c.get("userId");
   const { prisma } = prismaInstance(c);
 
   // validating data
@@ -126,7 +126,7 @@ router.put("/updateBlog", updateBlogSchema, async (c) => {
   await prisma.post.update({
     where: {
       id: data.blogId,
-      author_id: authorId,
+      author_id: userId,
     },
     data: {
       title: data.title,
@@ -143,7 +143,7 @@ router.get("/id/:id", async (c) => {
   // initializing prisma client
   const { prisma } = prismaInstance(c);
   // author id is userId currently logged-in
-  const authorId = c.get("authorId");
+  const userId = c.get("userId");
   // getting blog id
   const blogId = c.req.param("id");
   // creating new post
@@ -158,7 +158,7 @@ router.get("/id/:id", async (c) => {
       publishedAt: true,
       SavedBlogs: {
         where: {
-          userId: authorId,
+          userId: userId,
         },
         select: {
           postId: true,
@@ -169,15 +169,32 @@ router.get("/id/:id", async (c) => {
           id: true,
           username: true,
           email: true,
+          Followers: {
+            select: {
+              followingIds: {
+                select: {
+                  id: true,
+                },
+              },
+            },
+          },
         },
       },
     },
   });
+// please check the logic to add this to the  request in Readme
+  const follower = blog?.author.Followers.filter((obj) => {
+    if (obj.followingIds?.id === userId) {
+      return userId;
+    }
+    return;
+  });
 
   const blogPost = {
     ...blog,
-    isSaved : blog?.SavedBlogs.length === 1 ? true : false
-  }
+    isSaved: blog?.SavedBlogs.length === 1 ? true : false,
+    isFollower: follower?.length !== 0 ? true : false,
+  };
   // on success message
   return c.json({ blog: blogPost }, 200);
 });
@@ -186,7 +203,7 @@ router.get("/id/:id", async (c) => {
 router.get("/bulk", async (c) => {
   // initializing prisma client
   const { prisma } = prismaInstance(c);
-  const userId = c.get("authorId");
+  const userId = c.get("userId");
   const { cursor, limit = "5" } = c.req.query();
   const query = {
     take: parseInt(limit),
@@ -282,12 +299,12 @@ router.post("/save/:id", async (c) => {
   try {
     const { prisma } = prismaInstance(c);
     const postId = c.req.param("id");
-    const authorId = c.get("authorId");
+    const userId = c.get("userId");
     const result = await prisma.$transaction(async (tsx) => {
       const alreadySaved = await tsx.savedBlogs.findFirst({
         where: {
           postId: postId,
-          userId: authorId,
+          userId: userId,
         },
         select: {
           id: true,
@@ -298,7 +315,7 @@ router.post("/save/:id", async (c) => {
           where: {
             postId_userId: {
               postId: postId,
-              userId: authorId,
+              userId: userId,
             },
           },
         });
@@ -306,7 +323,7 @@ router.post("/save/:id", async (c) => {
       } else {
         const createSavedId = await tsx.savedBlogs.create({
           data: {
-            userId: authorId,
+            userId: userId,
             postId: postId,
           },
         });
@@ -323,7 +340,7 @@ router.post("/save/:id", async (c) => {
 router.get("/savedBlogs", async (c) => {
   try {
     const { prisma } = prismaInstance(c);
-    const userId = c.get("authorId");
+    const userId = c.get("userId");
 
     const savedBlogs = await prisma.savedBlogs.findMany({
       where: {
@@ -345,7 +362,7 @@ router.get("/savedBlogs", async (c) => {
 });
 
 router.post("/upvote", async (c) => {
-  const authorId = c.get("authorId");
+  const userId = c.get("userId");
   const { prisma } = prismaInstance(c);
   const blogId = c.req.query("blogId");
   try {
@@ -355,7 +372,7 @@ router.post("/upvote", async (c) => {
         where: {
           userId_postId: {
             // since we have declare the userId & the postId as unique
-            userId: authorId,
+            userId: userId,
             postId: blogId as string,
           },
         },
@@ -367,7 +384,7 @@ router.post("/upvote", async (c) => {
           // deletes the user like from the upvotes field of the user.
           where: {
             userId_postId: {
-              userId: authorId,
+              userId: userId,
               postId: blogId as string,
             },
           },
@@ -394,7 +411,7 @@ router.post("/upvote", async (c) => {
         // making an entry for the user liked post and incrementing the likeCount by 1 for that post
         const createUpvoteId = await tsx.upvotes.create({
           data: {
-            userId: authorId,
+            userId: userId,
             postId: blogId as string,
           },
         });
@@ -424,7 +441,7 @@ router.post("/upvote", async (c) => {
 });
 router.post("/metadata", async (c) => {
   const { prisma } = prismaInstance(c);
-  const authorId = c.get("authorId");
+  const userId = c.get("userId");
   //  is an array of ids seperated in batches
   const { blogId } = await c.req.json();
   const ids = blogId.map((item: { id: string }) => item.id);
@@ -441,7 +458,7 @@ router.post("/metadata", async (c) => {
         likeCount: true,
         SavedBlogs: {
           where: {
-            userId: authorId,
+            userId: userId,
           },
           select: {
             postId: true,

@@ -8,6 +8,7 @@ import { useState } from "react"
 import { USERS_BACKEND_URL } from "../../config"
 import { GoogleBtn } from "../../components/Buttons/GoogleBtn"
 import { motion } from "motion/react"
+import { toast } from "sonner"
 
 
 export const Login = () => {
@@ -26,23 +27,23 @@ export const Login = () => {
     try {
       const response = await axios.post(`${USERS_BACKEND_URL}/login`, newUser, { withCredentials: true })
       if (response.status === 200) {
-        alert("Login Successfull!")
+        toast.success("Login Successfull!")
         navigate("/protected")
       }
     } catch (e) {
       if (e instanceof AxiosError) {
         if (e.response?.status === 403) {
-          alert("Invalid Input! Please Try Again")
+          toast.warning("Invalid Input! Please Try Again")
           navigate("/login")
         } else if (e.response?.status === 401) {
-          alert("Incorrect Password")
+          toast.warning("Incorrect Password")
           navigate('/login')
         } else if (e.response?.status === 409) {
-          alert("No User Found! Please Signup")
+          toast.error("No User Found! Please Signup")
           navigate("/signup")
         }
       } else {
-        alert("Internal Server Error")
+        toast.error("Internal Server Error")
         navigate('/login')
       }
     }

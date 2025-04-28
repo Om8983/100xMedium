@@ -138,3 +138,17 @@ To avoid the concurrent request to backend i added a debounced function which wo
 
 
 <!-- about the recoil values for the specific blog evaluation in the blogcard component -->
+
+
+<!-- 
+
+things to take care of
+1. if the user is logged out or has no access or refresh token then a "user must relogin" page should be shown which is also called as error page and you must render it whenever this happens. I noticed it in Myblogs.tsx wheer i haven't added this error page. Make sure to add this page everywhere where it could be possible to avoid website getting broke 
+
+just mentioning where i left off.
+
+1. also make sure on userprofilecard.tsx you design the follower counts in a mobile first design mannner. 
+2. make sure to create a fallback error component if post goes undefined. 
+  -->
+
+

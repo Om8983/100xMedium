@@ -8,6 +8,7 @@ import { useState } from "react"
 import { USERS_BACKEND_URL } from "../../config"
 import { GoogleBtn } from "../../components/Buttons/GoogleBtn"
 import { motion } from "motion/react"
+import { toast } from "sonner"
 export const Signup = () => {
     const [username, setUsername] = useState<string>("")
     const [email, setEmail] = useState<string>("")
@@ -27,16 +28,16 @@ export const Signup = () => {
             const response = await axios.post(`${USERS_BACKEND_URL}/signup`, newUser, { withCredentials: true })
             if (response.status === 200) {
 
-                alert("User SignUp Successfull!!")
+                toast.success("User SignUp Successfull!!")
                 navigate("/protected")
             }
         } catch (e) {
             if (e instanceof AxiosError) {
                 if (e.response?.status === 403) {
-                    alert("Invalid Information! Please try again.")
+                    toast.warning("Invalid Information! Please try again.")
                     navigate("/signup")
                 } else if (e.response?.status === 409) {
-                    alert("User Already exist! Please Login")
+                    toast.error("User Already exist! Please Login")
                     navigate("/login")
                 }
             }

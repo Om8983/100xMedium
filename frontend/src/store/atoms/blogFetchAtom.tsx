@@ -1,6 +1,7 @@
 import axios, { AxiosError } from "axios";
 import { selectorFamily } from "recoil";
 import { BLOGS_BACKEND_URL, USERS_BACKEND_URL } from "../../config";
+import { toast } from "sonner";
 
 // all blogs 
 export const AllBlogs = selectorFamily({
@@ -67,10 +68,10 @@ export const UserBlogs = selectorFamily({
         } catch (e) {
             if (e instanceof AxiosError) {
                 if (e.response?.status === 401) {
-                    alert("User is Unauthorized")
+                    toast.error("User is Unauthorized")
                     return;
                 } else {
-                    alert("Internal Server Error")
+                    toast.error("Internal Server Error")
                     return;
                 }
             }

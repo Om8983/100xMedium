@@ -4,6 +4,7 @@ import { BLOGS_BACKEND_URL } from "../../config"
 import { useEffect, useState } from "react"
 import { useRecoilValue } from "recoil"
 import { blogPostMetaData } from "../../store/atoms/blogMetadata"
+import { toast } from "sonner"
 
 type Prop = {
     blogID: string
@@ -39,9 +40,9 @@ export const LikeButton = ({ blogID }: Prop) => {
                 setIsLike(false)
                 if (e instanceof AxiosError) {
                     if (e.response?.status === 401) {
-                        alert("User Unauthorized");
+                        toast.error("User Unauthorized")
                     } else {
-                        alert("Internal server error")
+                       toast.error("Internal Server Error")
                     }
                 }
             }

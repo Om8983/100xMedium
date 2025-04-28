@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { useDebounce } from "../../hooks/useDebounce";
 import { BLOGS_BACKEND_URL } from "../../config";
 import { JSONContent } from "@tiptap/react";
+import { toast } from "sonner";
 
 export const SearchBar = () => {
     interface Blog {
@@ -27,7 +28,7 @@ export const SearchBar = () => {
                 } catch (e) {
                     if (e instanceof AxiosError) {
                         if (e.response?.status === 500) {
-                            alert("Internal Server Error") // replace with custom alert 
+                            toast.error("Internal Server Error") // replace with custom alert 
                             return;
                         }
                     }

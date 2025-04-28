@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom"
 import { useAuth } from "../hooks/authHook";
 import { useEffect } from "react";
 import { Wobble } from "../components/Loader/Wobble";
+import { toast } from "sonner";
 
 export const Protected = () => {
     const navigate = useNavigate();
@@ -13,7 +14,7 @@ export const Protected = () => {
                 return navigate("/blog")
                 
             } else {
-                alert("Unauthorized User");
+                toast.error("Unauthorized User");
                 navigate("/login")
                 return
             }

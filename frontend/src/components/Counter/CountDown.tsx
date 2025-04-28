@@ -4,6 +4,7 @@ import { useSetRecoilState } from "recoil";
 import { Counter } from "./Counter";
 import { USERS_BACKEND_URL } from "../../config";
 import { token } from "../../store/atoms/otpAtoms";
+import { toast } from "sonner";
 
 const CountDown = (() => {
 
@@ -20,9 +21,9 @@ const CountDown = (() => {
         } catch (e) {
             if (e instanceof AxiosError) {
                 if (e.response?.status === 400) {
-                    alert("Error While Sending OTP")
+                    toast.error("Error Sending OTP!")
                 } else {
-                    alert("Internal Server Error")
+                    toast.error("Internal Server Error")
                 }
             }
         }

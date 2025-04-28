@@ -9,6 +9,7 @@ import { useState } from "react"
 import { userProfile } from "../store/atoms/userData"
 import { UserProfileCard } from "../components/UserProfile/UserProfileCard"
 import { Wobble } from "../components/Loader/Wobble"
+import { toast } from "sonner"
 
 export const UserProfile = () => {
     const setUserLogin = useSetRecoilState(userLoginAtom)
@@ -31,7 +32,7 @@ export const UserProfile = () => {
             await axios.post(`${USERS_BACKEND_URL}/logout`, {}, { withCredentials: true })
             setUserLogin(false)
             setVerify(false)
-            alert("User LogOut Success!!")
+            toast.success("User LogOut Success!!")
             navigate("/")
             return;
         } catch (e) {
@@ -55,10 +56,10 @@ export const UserProfile = () => {
         } catch (e) {
             if (e instanceof AxiosError) {
                 if (e.response?.status === 400) {
-                    alert("Error While Sending OTP")
+                    toast.error("Error While Sending OTP")
                     setBox(false)
                 } else {
-                    alert("Internal Server Error")
+                    toast.error("Internal Server Error")
                     setBox(false)
                 }
             }
@@ -74,9 +75,9 @@ export const UserProfile = () => {
         } catch (e) {
             if (e instanceof AxiosError) {
                 if (e.response?.status === 401) {
-                    alert("Invalid OTP")
+                    toast.warning("Invalid OTP")
                 } else {
-                    alert("Internal Server Error")
+                    toast.error("Internal Server Error")
                 }
             }
         }
@@ -85,7 +86,7 @@ export const UserProfile = () => {
     if (userData.state === "loading") {
         return <Wobble></Wobble>
     } else if (userData.state === "hasError") {
-        alert("internal server issue ")
+        toast.error("internal server issue ")
     } if (userData.state === "hasValue") {
 
         if (userData.contents === null || userData.contents.errorStatus === 500) {

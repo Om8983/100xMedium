@@ -9,6 +9,8 @@ import { UserEmailProfile } from "./UserEmailProfile"
 import { verifiedEmail } from "../../store/atoms/userInfoAtom"
 import CountDown from "../Counter/CountDown"
 import { NavLinks } from "../NavBar/NavLinks"
+import { ProfileStats } from "./ProfileStats"
+import { toast } from "sonner"
 
 type Props = {
     username: string
@@ -53,21 +55,21 @@ export const UserProfileCard = ({ username, email, onClickLogout, onClickSendOtp
 
             const res = await axios.put(`${USERS_BACKEND_URL}/updateUser`, fieldUpdate, { withCredentials: true })
             if (res.status === 200) {
-                alert("user info update success")
+                toast.success("User Info Updated Successfully")
                 setEdit(false)
             }
 
         } catch (e) {
             if (e instanceof AxiosError) {
                 if (e.response?.status === 401) {
-                    alert("User Unauthorized")
+                    toast.error("User Unauthorized")
                     navigate("/login")
                 }
                 if (e.response?.status === 403) {
-                    alert("Please enter Valid Information")
+                    toast.error("Please enter Valid Information")
                 }
                 if (e.response?.status === 500) {
-                    alert("Internal Server Error!!")
+                    toast.error("Internal Server Error!!")
                 }
             }
         }
@@ -79,7 +81,7 @@ export const UserProfileCard = ({ username, email, onClickLogout, onClickSendOtp
             <div className="  w-screen min-h-screen bg-[url(/paper.png)] bg-fixed bg-no-repeat bg-cover  ">
                 <NavLinks />
 
-                <div className="flex flex-col items-center md:grid md:grid-cols-4 mt-5 lg:mt-24 ">
+                <div className="flex flex-col items-center md:grid md:grid-cols-4 md:my-[10rem] mt-5 lg:mt-24 ">
                     {/* user img */}
                     <div className="w-32 h-32 bg-orange-50 rounded-full outline-none col-span-2 col-start-1 md:mx-auto md:w-44 md:h-44 lg:w-[14rem] lg:h-[14rem] overflow-hidden">
                         <img src="/user.svg" alt="userImg" />
@@ -87,6 +89,9 @@ export const UserProfileCard = ({ username, email, onClickLogout, onClickSendOtp
 
                     {/* details */}
                     <div className="flex flex-col items-center ">
+                        {/* profile stats includes follower and following and post count */}
+                        <ProfileStats></ProfileStats>
+
                         {/* edit profile btn */}
                         <button className="bg-[#ececec] self-center px-2 py-1 rounded-md text-sm font-serif font-medium mt-5 md:mt-6 lg:text-base lg:px-3" onClick={() => setEdit(true)} >
                             Edit Profile

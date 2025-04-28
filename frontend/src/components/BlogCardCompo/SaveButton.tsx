@@ -5,6 +5,7 @@ import axios, { AxiosError } from "axios"
 import { useParams } from "react-router-dom"
 import { useRecoilValue } from "recoil"
 import { blogPostMetaData } from "../../store/atoms/blogMetadata"
+import { toast } from "sonner"
 type Prop = {
     blogId?: string
 }
@@ -32,21 +33,23 @@ export const SaveButton = ({ blogId }: Prop) => {
             try {
                 const res = await axios.post(`${BLOGS_BACKEND_URL}/save/${id}`, {}, { withCredentials: true })
                 if (res.status === 200) {
+                    toast.success("Blog Unsaved!")
                     setSaved(res.data.postSaved)
                 }
                 // i seperated below conditional cuz on each toggle setVisible was true causing inconsistency. So if only postSaved response is true then only setVisible to true
                 if (res.status === 200 && res.data.postSaved) {
+                    toast.success("Blog Saved Successfully!")
                     setVisible(true)
                 }
             } catch (e) {
                 setSaved(false)
                 if (e instanceof AxiosError) {
                     if (e.response?.status === 401) {
-                        alert("Unauthorized User!!")
+                        toast.error("User Unauthorized")
                     } else if (e.response?.status === 404) {
-                        alert("No such post exist!")
+                        toast.error("No Such Post Exist!!")
                     } else {
-                        alert("Internal Server Error")
+                        toast.error("Internal Server Error!!")
                     }
                 }
             }
@@ -95,17 +98,6 @@ export const SaveButton = ({ blogId }: Prop) => {
                     </motion.span>
                 }
             </motion.button>
-            <motion.span
-                initial={{ opacity: 0 }}
-                animate={{ opacity: visible ? 1 : 0 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 2, ease: "easeInOut" }}
-                layout
-                className="fixed bg-[#ececec] z-50 bottom-10 px-3 py-[0.15rem] text-base font-serif text-[#374151] rounded-[0.35rem]"
-                onAnimationComplete={() => setVisible(false)}
-            >
-                Blog Saved Successfully!
-            </motion.span>
         </>
 
     )

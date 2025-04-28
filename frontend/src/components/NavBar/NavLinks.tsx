@@ -9,6 +9,7 @@ import { userId, userLoginAtom, verifiedEmail } from "../../store/atoms/userInfo
 import { SearchBar } from "./SearchBar"
 import { CreateBlog } from "./CreateBlog"
 import { Publish } from "./Publish"
+import { toast } from "sonner"
 
 type Prop = {
     className?: string
@@ -42,7 +43,7 @@ export const NavLinks = ({ className }: Prop) => {
             resetUserId();
             resetVerify();
             resetLogin();
-            alert("User LogOut Success!!");
+            toast.success("User Logout Success")
             navigate("/");
             return;
         } catch (e) {

@@ -6,6 +6,7 @@ import axios, { AxiosError } from "axios"
 import { BLOGS_BACKEND_URL } from "../config"
 import { useMetadata } from "../hooks/metadata"
 import { BlogCardSkeleton } from "../components/BlogCardSkeleton"
+import { toast } from "sonner"
 
 export const SavedBlogs = () => {
     type Post = {
@@ -43,9 +44,9 @@ export const SavedBlogs = () => {
             } catch (e) {
                 if (e instanceof AxiosError) {
                     if (e.response?.status === 401) {
-                        alert("Unauthorized Request")
+                        toast.error("Unauthorized Request")
                     } else {
-                        alert("Internal Server Error")
+                        toast.error("Internal Server Error")
                     }
                 }
             }

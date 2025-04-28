@@ -4,6 +4,7 @@ import { useRecoilValue } from "recoil"
 import { blogPostData } from "../../store/atoms/editor"
 import { BLOGS_BACKEND_URL } from "../../config"
 import { AnimatePresence, easeInOut, motion } from "motion/react"
+import { toast } from "sonner"
 
 export const Publish = () => {
     const [confirmPost, setConfirmPost] = useState(false);
@@ -35,7 +36,7 @@ export const Publish = () => {
             }
         } catch (e) {
             if (e instanceof AxiosError) {
-                alert("Internal server error")
+                toast.error("Internal Server Error!")
             }
         }
     }

@@ -2,8 +2,9 @@ import axios, { AxiosError } from "axios";
 import { selectorFamily } from "recoil";
 import { USERS_BACKEND_URL } from "../../config";
 
+// to remove id from the query as we can directly access the userId from the accessToken we receive
 
-
+// i have made the followers, following and the post count in a separate route as these number would be dynamic/
 export const userProfile = selectorFamily({
     key: "userProfileDetails",
     get: (id: string) => async () => {

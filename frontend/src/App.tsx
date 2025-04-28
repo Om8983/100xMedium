@@ -1,6 +1,7 @@
 import { BrowserRouter } from "react-router-dom"
 import { AppRoutes } from "./AppRoutes"
 import { RecoilRoot } from "recoil"
+import { Toaster } from "sonner"
 
 function App() {
 
@@ -8,6 +9,7 @@ function App() {
     <>
       <BrowserRouter>
         <RecoilRoot>
+          <Toaster></Toaster>
           <AppRoutes></AppRoutes>
         </RecoilRoot>
       </BrowserRouter>

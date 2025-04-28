@@ -6,6 +6,7 @@ import { BlogCard } from "../components/BlogCard"
 import { NavLinks } from "../components/NavBar/NavLinks"
 import { JSONContent } from "@tiptap/react"
 import { Wobble } from "../components/Loader/Wobble"
+import { toast } from "sonner"
 
 export const MyBlogs = () => {
     const id = useRecoilValue(userId)
@@ -14,7 +15,7 @@ export const MyBlogs = () => {
     if (blogPost.state === "loading") {
         return <Wobble></Wobble>
     } else if (blogPost.state === "hasError") {
-        alert("Unexpected Error Occured")
+        toast.error("Unexpected Error Occured")
     } else if (blogPost.state === "hasValue") {
         if (blogPost.contents === undefined) {
             return <UnAuth />

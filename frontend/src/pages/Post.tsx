@@ -2,9 +2,26 @@ import { useRecoilValueLoadable } from "recoil"
 import { BlogPostData } from "../store/atoms/blogFetchAtom"
 import { useNavigate, useParams } from "react-router-dom"
 import { BlogPostSkeleton } from "../components/BlogPostSkeleton"
-import { Blog } from "../components/Blog"
+import { Blog } from "../components/BlogPostCompo/Blog"
 import { NavLinks } from "../components/NavBar/NavLinks"
 import { JSONContent } from "@tiptap/react"
+import { PostContext } from "../context/PostContext"
+import { toast } from "sonner"
+
+export type Blog = {
+    title: string
+    brief: string
+    imageURL : string
+    content: JSONContent
+    publishedAt: string
+    author: {
+        id: string
+        username: string
+    }
+    isSaved: boolean
+    isFollower: boolean
+}
+
 export const Post = () => {
 
     const navigate = useNavigate();
@@ -23,7 +40,7 @@ export const Post = () => {
             <BlogPostSkeleton></BlogPostSkeleton>
         </div>
     } else if (blogLoadable.state === "hasError") {
-        alert("Unexpected error occured")
+        toast.error("Unexpected error occured")
     } else if (blogLoadable.state === "hasValue") {
         if (blogLoadable.contents === undefined) {
             return (
@@ -43,17 +60,7 @@ export const Post = () => {
                 </>
             )
         } else {
-            type Blog = { 
-                title : string
-                brief : string
-                content : JSONContent
-                publishedAt : string
-                author : {
-                    username: string
-                }
-                isSaved : boolean
-            }
-            const blog : Blog= blogLoadable.contents.blog
+            const blog: Blog = blogLoadable.contents.blog
 
             return (
                 <>
@@ -61,14 +68,9 @@ export const Post = () => {
                         blog &&
                         <div className="flex flex-col min-h-screen bg-[url(/paper.png)] bg-fixed bg-no-repeat bg-cover">
                             <NavLinks ></NavLinks>
-                            <Blog
-                                username={blog?.author.username}
-                                title={blog?.title}
-                                brief={blog.brief}
-                                content={blog?.content}
-                                publishedAt={blog?.publishedAt}
-                                isSaved={blog.isSaved}
-                            />
+                            <PostContext.Provider value={blog}>
+                                <Blog />
+                            </PostContext.Provider>
                         </div>
                     }
                 </>

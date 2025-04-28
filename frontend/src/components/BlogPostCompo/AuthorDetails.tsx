@@ -1,14 +1,19 @@
 import { motion } from "motion/react"
 // import { useState } from "react"
 import { SaveButton } from "../BlogCardCompo/SaveButton"
+import { FollowButton } from "./FollowButton"
+import { useContext } from "react"
+import { PostContext } from "../../context/PostContext"
 type Prop = {
-    username: string,
-    publishedAt: string,
-    item: {},
-    imageURL: string
+    item: {
+        hidden: { opacity: number, y: number },
+        show: { opacity: number, y: number }
+    },
 }
 
-export const AuthorDetails = ({ username, publishedAt, imageURL, item }: Prop) => {
+export const AuthorDetails = ({ item }: Prop) => {
+    const blog = useContext(PostContext)
+    const imageURL = ""  // for temporary purpose
 
     return (
         <motion.div variants={item} className="flex justify-between">
@@ -25,20 +30,16 @@ export const AuthorDetails = ({ username, publishedAt, imageURL, item }: Prop) =
                 }
                 <div className="flex flex-col pl-2">
                     <div className=" font-[590] text-md font-serif lg:text-base " >
-                        {username}
+                        {blog?.author.username}
                     </div>
                     <div className="text-[#374151] text-xs font-serif ">
-                        {publishedAt}
+                        {blog?.publishedAt}
                     </div>
                 </div>
             </div>
             <div className="flex space-x-3 items-center">
                 <SaveButton ></SaveButton>
-                <motion.button
-                    whileHover={{ scale: 1.1, backgroundColor: "#8a6842" }}
-                    className="bg-[#be8f5a] h-7 text-center text-sm lg:text-[0.8rem] text-white px-2 rounded-3xl">
-                    Follow
-                </motion.button>
+                <FollowButton ></FollowButton>
             </div>
         </motion.div>
     )

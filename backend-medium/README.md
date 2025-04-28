@@ -28,4 +28,8 @@ In blog.routes the middleware was defined globally because if you see the differ
 
 
 
-<!-- the logic behind addigng  -->
+<!-- the logic behind adding the isFollower function
+
+the reason adding isFOllower funciton was that i want to hold the state for the follow and unfollow of the user with relation to the author. Since the current route data when received on frontend remains cached, I wasn't able to hold this dynamic state globally. So i updated the res data, added isFollower option and whenever user visits certain post the state for follow would be the latest one initially. After if user unfollows the author then the state is being hold locally. And since we were receiving a cached response(thanks to recoil), there's no chance that the state would get refreshed untill a manual reload happens or user logs out. 
+Still after revisit we will again receive fresh data with the updated state.
+  -->

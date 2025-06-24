@@ -25,7 +25,7 @@ export const AppRoutes = () => {
         <Route path='/myblogs' element={<MyBlogs />}></Route>
         {/* user profile */}
         <Route path='/userProfile' element={<UserProfile />}></Route>
-        <Route path='/editor' element={<WriteBlog/>}></Route>
+        <Route path='/editor' element={<WriteBlog />}></Route>
         {/* user saved Blogs */}
         <Route path='/savedBlogs' element={<SavedBlogs></SavedBlogs>}></Route>
 

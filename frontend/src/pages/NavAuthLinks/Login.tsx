@@ -50,7 +50,7 @@ export const Login = () => {
   }
   const variant = {
     initial: { opacity: 0, y: 30 },
-    animate: { opacity: 1, y: 0, transition : {duration : 0.5, ease : "easeInOut"} }
+    animate: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeInOut" } }
   }
   return (
     <>

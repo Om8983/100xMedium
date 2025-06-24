@@ -14,8 +14,8 @@ export const GoogleBtn = ({ accType }: Prop) => {
             className="relative ">
             <div className="absolute bg-brad w-[200px] h-[2.4rem] p-2 blur-lg"></div>
             <motion.div
-            whileHover={{scale : 1.1}} 
-            className="relative flex gap-2 bg-white w-full rounded-lg p-2 -inset-y-[0.38rem] items-center justify-center font-medium ">
+                whileHover={{ scale: 1.1 }}
+                className="relative flex gap-2 bg-white w-full rounded-lg p-2 -inset-y-[0.38rem] items-center justify-center font-medium ">
                 {
                     accType === "Login" ? "Login With Google" : "Sign Up With Google"
                 }

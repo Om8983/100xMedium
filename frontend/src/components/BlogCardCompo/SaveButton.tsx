@@ -15,7 +15,7 @@ export const SaveButton = ({ blogId }: Prop) => {
 
     const [hover, setHover] = useState(false)
     const [saved, setSaved] = useState(false)
-    const [visible, setVisible] = useState(false)
+    
     let { id } = useParams()
     
     if (id === undefined) {
@@ -39,7 +39,7 @@ export const SaveButton = ({ blogId }: Prop) => {
                 // i seperated below conditional cuz on each toggle setVisible was true causing inconsistency. So if only postSaved response is true then only setVisible to true
                 if (res.status === 200 && res.data.postSaved) {
                     toast.success("Blog Saved Successfully!")
-                    setVisible(true)
+
                 }
             } catch (e) {
                 setSaved(false)

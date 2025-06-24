@@ -39,7 +39,7 @@ export const Home = () => {
             y: 0,
             transition: {
                 staggerChildren: 0.2,
-                duration : 0.3
+                duration: 0.3
             }
         }
     }
@@ -55,27 +55,30 @@ export const Home = () => {
                     animate="animate"
                     className=" pt-[12rem] md:pt-[12rem] lg:pt-[14.5rem] ml-4 lg:ml-[8rem]"
                 >
-                    {/* the first h1 will be visible to screen-reader only "sr-only", but the other h1 won't be visible to screen-readers. While this is the opposite of how the user sees. The user would see the other h1 but won't be able to visit the first h1 */}
-                    <h1 className="sr-only">{title}</h1>
-                    <h1 aria-hidden className="text-7xl md:text-8xl font-[boy] font-bold ">
-                        {title
-                            .split("")
-                            .map((letter,index) =>
-                                <motion.span key={index} className={`inline-block ${letter === " " && "w-4"}`} variants={children} >
-                                    {letter}
-                                </motion.span>)
-                        }
-                    </h1>
 
+                    <motion.h1
+                        initial={{ opacity: 0, scale: 0.95, filter: 'blur(10px)' }}
+                        animate={{ opacity: 1, scale: 1.05, filter: "blur(0px)" }}
+                        transition={{ duration: 0.8, ease: "easeInOut" }}
+                        className="text-7xl md:text-8xl font-[boy] font-bold"
+                    >
+                        {title}
+                    </motion.h1>
                     <motion.p
-                        variants={children}
+                        // variants={children}
+                        initial={{ opacity: 0, scale: 0.95, filter: 'blur(10px)' }}
+                        animate={{ opacity: 1, scale: 1.05, filter: "blur(0px)" }}
+                        transition={{ duration: 0.8, ease: "easeInOut" }}
                         className="text-gray-500 text-2xl font-[boy] ">
                         {subtitle}
                     </motion.p>
                     <motion.div
-                        initial={{ opacity: 0, }}
-                        animate={{ opacity: 1, }}
-                        transition={{ duration: 0.5, ease: "easeIn", delay: 3.6 }}
+                        // initial={{ opacity: 0, }}
+                        // animate={{ opacity: 1, }}
+                        // transition={{ duration: 0.5, ease: "easeIn" }}
+                        initial={{ opacity: 0, scale: 0.95, filter: 'blur(10px)' }}
+                        animate={{ opacity: 1, scale: 1.05, filter: "blur(0px)" }}
+                        transition={{ duration: 0.8, ease: "easeInOut" }}
                         className=" pt-5 ">
                         <button
                             className="w-[170px] h-[40px] text-xl text-black bg-white bg-opacity-40 font-[boy] outline-none border-2 border-black rounded-2xl p-1 transition ease-in-out delay-100 hover:scale-110 hover:bg-black hover:text-white"

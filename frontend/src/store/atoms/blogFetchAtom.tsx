@@ -17,13 +17,13 @@ export const AllBlogs = selectorFamily({
             if (e instanceof AxiosError) {
                 if (e.response?.status === 401) {
                     return {
-                        data : null,
-                        errorStatus : 401
+                        data: null,
+                        errorStatus: 401
                     }
                 } else {
-                    return { 
-                        data : null,
-                        errorStatus : 500
+                    return {
+                        data: null,
+                        errorStatus: 500
                     }
                 }
             }

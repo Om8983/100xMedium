@@ -25,13 +25,14 @@ export const Publish = () => {
 
                 const data = {
                     title: blogdata.title,
-                    brief : brief,
+                    brief: brief,
                     content: blogdata.content,
                     tag: tags
                 }
                 const res = await axios.post(`${BLOGS_BACKEND_URL}/createBlog`, data, { withCredentials: true })
+                // rather make a refetch request on blog publish
                 if (res.status === 200) {
-                    window.open("http://localhost:5173/myblogs", "_self")
+                    window.open("https://100x-medium-zo5p.vercel.app/myblogs", "_self")
                 }
             }
         } catch (e) {
@@ -59,7 +60,7 @@ export const Publish = () => {
                                 Add a brief for your content to let people have a context.
                             </span>
                             <textarea maxLength={70} className=" mt-[2px] resize-none scroll-m-0 rounded-md outline-none w-full h-[80px] px-2 py-1 text-[#374151] text-sm" onChange={(e) => setBrief(e.target.value)} ></textarea>
-                            
+
 
                             {/* tags */}
                             <label htmlFor="tagInput" className="md:mt-7 min-w-[180px] max-w-[230px] mt-2 "> Add tag (tags) that relate to your content (max 3).</label>

@@ -34,7 +34,7 @@ export const Publish = () => {
                 const res = await axios.post(`${BLOGS_BACKEND_URL}/createBlog`, data, { withCredentials: true })
                 // rather make a refetch request on blog publish
                 if (res.status === 200) {
-                    navigate("https://100x-medium-zo5p.vercel.app/myblogs")
+                    navigate("/myblogs")
                 }
             }
         } catch (e) {

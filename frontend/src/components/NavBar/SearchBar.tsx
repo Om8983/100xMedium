@@ -11,7 +11,7 @@ export const SearchBar = () => {
     interface Blog {
         id: string
         title: string,
-        brief: string, 
+        brief: string,
         content: JSONContent
     }
     const [searchVal, setSearchVal] = useState<string>("")

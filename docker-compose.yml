@@ -1,0 +1,51 @@
+services:
+
+  postgre_db : 
+    image : postgres:alpine
+    container_name : postgres_db
+    ports : 
+      - 5432:5432
+    volumes : 
+      - postgre_db:/var/lib/postgresql/data
+    environment : 
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: postgres
+        POSTGRES_DB: belog
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  backend :
+    build : 
+      context : ./backend-medium
+      dockerfile : Dockerfile
+    container_name : backend
+    env_file : 
+      - ./backend-medium/.env
+    ports : 
+      - 8787:8787
+    depends_on:
+      postgre_db:
+        condition: service_healthy
+    volumes:
+      - ./backend-medium:/usr/src/app
+      - /usr/src/app/node_modules
+    
+
+  frontend : 
+    build : 
+      context : ./frontend
+      dockerfile : Dockerfile
+    container_name : frontend
+    env_file : ./frontend/.env
+    ports : 
+      - 5173:5173
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/usr/src/app
+      - /usr/src/app/node_modules
+
+volumes :  
+  postgre_db:

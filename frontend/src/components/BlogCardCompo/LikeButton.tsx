@@ -42,7 +42,7 @@ export const LikeButton = ({ blogID }: Prop) => {
                     if (e.response?.status === 401) {
                         toast.error("User Unauthorized")
                     } else {
-                       toast.error("Internal Server Error")
+                        toast.error("Internal Server Error")
                     }
                 }
             }

@@ -6,7 +6,7 @@ type User = {
   id: string;
   email: string;
   username: string;
-  verified : boolean
+  verified: boolean;
 };
 
 type Props = {
@@ -22,14 +22,13 @@ export const Cookies = async ({
   userData,
 }: Props) => {
   try {
-
     // create access and refresh token and setCookie
     const accessToken = await sign(
       {
         id: userData?.id,
         email: userData?.email,
         username: userData?.username,
-        verified : userData?.verified,
+        verified: userData?.verified,
         iat: Math.floor(Date.now() / 1000),
         exp: Math.floor(Date.now() / 1000) + 60 * 15,
       },
@@ -57,6 +56,6 @@ export const Cookies = async ({
       sameSite: "None",
     });
   } catch (e) {
-    return c.json({msg : "error while attaching cookies"})
+    return c.json({ msg: "error while attaching cookies" });
   }
 };

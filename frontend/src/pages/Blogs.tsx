@@ -37,12 +37,16 @@ export const Blogs = () => {
     return <UnAuth></UnAuth>
   }
   useEffect(() => {
+    if (blogData.contents.hasData === null) {
+      setLoading(false)
+      return
+    }
     if (blogData.state === "hasValue") {
       setData((prev) => {
-        // to avoid duplication of blogs coming in batches
+        // to avoid duplication of blogs comi blogData.contents.hasDatang in batches
         // const newBlog: Blog[] = blogData.contents.blogs.filter((blog: Blog) => !prev.some(existingBlog => existingBlog.id === blog.id))
         // alternate way to above is below
-        const newBlog: Blog[] = blogData.contents.allBlog.filter((blog: Blog) => prev.every(existingBlog => existingBlog.id !== blog.id))
+        const newBlog: Blog[] = blogData.contents.allBlog?.filter((blog: Blog) => prev.every(existingBlog => existingBlog.id !== blog.id))
         return [...prev, ...newBlog]
       })
       setIds((prev) => {
@@ -56,7 +60,7 @@ export const Blogs = () => {
 
   const handleScroll = () => {
     if (window.innerHeight + document.documentElement.scrollTop >= document.documentElement.offsetHeight - 100) {
-      if (blogData.state === "hasValue" && blogData.contents.nextCursor !== null && !loading) {
+      if (blogData.state === "hasValue" && (blogData.contents.hasData !== null) && !loading) {
         setLoading(true)
         setCursor(blogData.contents.nextCursor)
       }
@@ -91,7 +95,7 @@ export const Blogs = () => {
       </div>
     );
   }
-
+  console.log("hasdata", blogData.contents.hasData)
   return (
     <div className="flex flex-col gap-2 items-center w-screen min-h-screen bg-[url(/paper.png)] bg-fixed bg-no-repeat bg-cover  ">
       <NavLinks />
@@ -115,7 +119,8 @@ export const Blogs = () => {
         )
       }
       {
-        blogData.contents.nextCursor === null && !loading &&
+        blogData.contents.hasData === null &&
+        !loading &&
         <div className="text-[#374151] pb-3 ">No more Blogs Exist</div>
       }
     </div >

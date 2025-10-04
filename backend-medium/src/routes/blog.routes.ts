@@ -182,7 +182,7 @@ router.get("/id/:id", async (c) => {
       },
     },
   });
-// please check the logic to add this to the  request in Readme
+  // please check the logic to add this to the  request in Readme
   const follower = blog?.author.Followers.filter((obj) => {
     if (obj.followingIds?.id === userId) {
       return userId;
@@ -260,7 +260,7 @@ router.get("/bulk", async (c) => {
   // read Readme.md to know more about cursor based pagination and why and how is it used here.
   const allBlog = await prisma.post.findMany(cursor ? cursorQuery : query);
   if (allBlog.length === 0) {
-    return c.json({ msg: "No blogs are posted" }, 200);
+    return c.json({ msg: "No blogs are posted", hasData: null }, 200);
   }
 
   return c.json(

@@ -25,6 +25,7 @@ const router = new Hono<{ Bindings: Bindings }>();
 
 const accessTokenValidation = async (c: Context, next: () => Promise<void>) => {
   const accessToken = getCookie(c, "accessToken");
+  console.log("accessToken", accessToken);
   if (!accessToken) {
     // Initializing Prisma Client
     const { prisma } = prismaInstance(c);
@@ -338,6 +339,7 @@ router.get("/authCheck", accessTokenValidation, async (c) => {
   try {
     // Getting accessToken from cookies
     const accessToken = getCookie(c, "accessToken");
+    console.log("accessToken", accessToken);
     const decodedData = await verify(
       accessToken as string,
       c.env.ACCESSTOKEN_SECRET
@@ -461,10 +463,10 @@ router.post("/follow/:id", async (c) => {
       // Nice thought but i will explain this in the readme file about how the schema was designed and how both the following of the user and the followers of the author gets incremented or decrement as user follows or unfollows respectively
       return true;
     });
-    if(!result){
-      return c.json({action : "Unfollow", state : "Success", result},200)
+    if (!result) {
+      return c.json({ action: "Unfollow", state: "Success", result }, 200);
     }
-    return c.json({action : "Follow", state : "Success"}, 200)
+    return c.json({ action: "Follow", state: "Success" }, 200);
   } catch (e) {
     return c.json({ msg: "Error while following author." }, 500);
   }

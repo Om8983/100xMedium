@@ -73,49 +73,48 @@ router.get("/redirect", async (c) => {
           email: true,
           username: true,
           id: true,
-          verified : true
+          verified: true,
         },
       });
 
       // create acccess and refresh token and setCookie
       // promisified cookie function to assign cookies
       await Cookies({
-        c : c, 
-        ACCESSTOKEN_SECRET : c.env.ACCESSTOKEN_SECRET,
-        REFRESHTOKEN_SECRET : c.env.REFRESHTOKEN_SECRET,
-        userData : {
-          username : newUser.username,
-          email : newUser.email,
-          id : newUser.id,
-          verified : newUser.verified!
-        }
-      })
+        c: c,
+        ACCESSTOKEN_SECRET: c.env.ACCESSTOKEN_SECRET,
+        REFRESHTOKEN_SECRET: c.env.REFRESHTOKEN_SECRET,
+        userData: {
+          username: newUser?.username!,
+          email: newUser?.email!,
+          id: newUser?.id!,
+          verified: newUser?.verified!,
+        },
+      });
       return c.json({ msg: "User Signup Success" }, 200);
-
     } else {
       // if user with same email then assign cookies
       // promisified function to setCookies
       await Cookies({
-        c : c, 
-        ACCESSTOKEN_SECRET : c.env.ACCESSTOKEN_SECRET,
-        REFRESHTOKEN_SECRET : c.env.REFRESHTOKEN_SECRET,
-        userData : {
-          username : user.username,
-          email : user.email,
-          id : user.id,
-          verified : user.verified!
-        }
-      })
+        c: c,
+        ACCESSTOKEN_SECRET: c.env.ACCESSTOKEN_SECRET,
+        REFRESHTOKEN_SECRET: c.env.REFRESHTOKEN_SECRET,
+        userData: {
+          username: user?.username!,
+          email: user?.email!,
+          id: user?.id!,
+          verified: user?.verified!,
+        },
+      });
+
       c.json({ msg: "User Login Success" }, 200);
     }
   } catch (e) {
-    // if any error occurs while decoding token or accessing token 
+    // if any error occurs while decoding token or accessing token
     return c.json({ msg: "error occured" }, 500);
   } finally {
-    // finally redirect to blog page 
+    // finally redirect to blog pagec
     return c.redirect("http://localhost:5173/protected");
   }
 });
 
-
-export default router
+export default router;

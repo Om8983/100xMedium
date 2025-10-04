@@ -10,7 +10,7 @@ const app = new Hono<{
 }>();
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: ["http://localhost:5173", "https://100x-medium.vercel.app"],
     credentials: true,
   })
 );
@@ -20,3 +20,4 @@ app.route("api/v1/blog", blogRouter);
 app.route("/auth", googleRoute);
 
 export default app;
+// "https://100x-medium.vercel.app/protected"

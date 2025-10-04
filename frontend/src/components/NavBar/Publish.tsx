@@ -5,6 +5,7 @@ import { blogPostData } from "../../store/atoms/editor"
 import { BLOGS_BACKEND_URL } from "../../config"
 import { AnimatePresence, easeInOut, motion } from "motion/react"
 import { toast } from "sonner"
+import { useNavigate } from "react-router-dom"
 
 export const Publish = () => {
     const [confirmPost, setConfirmPost] = useState(false);
@@ -13,6 +14,7 @@ export const Publish = () => {
     const [brief, setBrief] = useState<string>("")
     const [isEmpty, setEmpty] = useState(false)
     const blogdata = useRecoilValue(blogPostData);
+    const navigate = useNavigate();
     const publishBlog = async () => {
         try {
             if (blogdata.title.trim().length === 0) {
@@ -32,7 +34,7 @@ export const Publish = () => {
                 const res = await axios.post(`${BLOGS_BACKEND_URL}/createBlog`, data, { withCredentials: true })
                 // rather make a refetch request on blog publish
                 if (res.status === 200) {
-                    window.open("https://100x-medium-zo5p.vercel.app/myblogs", "_self")
+                    navigate("https://100x-medium-zo5p.vercel.app/myblogs")
                 }
             }
         } catch (e) {

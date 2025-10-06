@@ -11,7 +11,7 @@ import { toast } from "sonner"
 export type Blog = {
     title: string
     brief: string
-    imageURL : string
+    imageURL: string
     content: JSONContent
     publishedAt: string
     author: {

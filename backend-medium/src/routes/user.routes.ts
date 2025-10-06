@@ -444,8 +444,10 @@ router.post("/follow/:id", async (c) => {
     );
 
     const userId = decodedData.id;
-
+    console.log("authorId", authorId);
+    console.log("userId", userId);
     const result = await prisma.$transaction(async (tsx) => {
+      if (userId === authorId) return false;
       const alreadyFollowing = await tsx.relationships.findFirst({
         where: {
           followers: authorId,
@@ -480,10 +482,13 @@ router.post("/follow/:id", async (c) => {
       // Nice thought but i will explain this in the readme file about how the schema was designed and how both the following of the user and the followers of the author gets incremented or decrement as user follows or unfollows respectively
       return true;
     });
+    if (!result && userId === authorId) {
+      return c.json({ action: "Follow", state: "Success", result }, 409);
+    }
     if (!result) {
       return c.json({ action: "Unfollow", state: "Success", result }, 200);
     }
-    return c.json({ action: "Follow", state: "Success" }, 200);
+    return c.json({ action: "Follow", state: "Success", result }, 200);
   } catch (e) {
     return c.json({ msg: "Error while following author." }, 500);
   }

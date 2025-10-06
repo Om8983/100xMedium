@@ -4,6 +4,8 @@ import { SaveButton } from "../BlogCardCompo/SaveButton"
 import { FollowButton } from "./FollowButton"
 import { useContext } from "react"
 import { PostContext } from "../../context/PostContext"
+import { useRecoilValue } from "recoil"
+import { userId } from "../../store/atoms/userInfoAtom"
 type Prop = {
     item: {
         hidden: { opacity: number, y: number },
@@ -14,7 +16,7 @@ type Prop = {
 export const AuthorDetails = ({ item }: Prop) => {
     const blog = useContext(PostContext)
     const imageURL = ""  // for temporary purpose
-
+    const id = useRecoilValue(userId)
     return (
         <motion.div variants={item} className="flex justify-between">
             <div className="flex items-center">
@@ -37,10 +39,12 @@ export const AuthorDetails = ({ item }: Prop) => {
                     </div>
                 </div>
             </div>
-            <div className="flex space-x-3 items-center">
-                <SaveButton ></SaveButton>
-                <FollowButton ></FollowButton>
-            </div>
+            {
+                id !== blog?.author.id &&
+                <div className="flex space-x-3 items-center">
+                    <SaveButton ></SaveButton>
+                    <FollowButton ></FollowButton>
+                </div>}
         </motion.div>
     )
 }

@@ -39,7 +39,7 @@ export const FollowButton = () => {
             }
         }, 800);
     }
-    console.log("isFollow", isFollow)
+
     return (
         <>
             <motion.button

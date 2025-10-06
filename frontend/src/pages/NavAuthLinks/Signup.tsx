@@ -13,7 +13,7 @@ export const Signup = () => {
     const [username, setUsername] = useState<string>("")
     const [email, setEmail] = useState<string>("")
     const [password, SetPass] = useState<string>("")
-
+    const [loading, setLoading] = useState(false)
     const navigate = useNavigate();
     //login redirect
     const RedirectLogin = () => {
@@ -24,6 +24,7 @@ export const Signup = () => {
         let newUser: SignUpSchema = {
             username, email, password
         }
+        setLoading(true)
         try {
             const response = await axios.post(`${USERS_BACKEND_URL}/signup`, newUser, { withCredentials: true })
             if (response.status === 200) {
@@ -41,6 +42,9 @@ export const Signup = () => {
                     navigate("/login")
                 }
             }
+        }
+        finally {
+            setLoading(false)
         }
     }
     const variant = {
@@ -118,6 +122,7 @@ export const Signup = () => {
                     <Button
                         onclick={handleSignup}
                         className="mt-4"
+                        loading={loading}
                         text="Sign Up"></Button>
                     <div className="flex flex-col gap-8 mt-3">
                         <div className="flex items-center">

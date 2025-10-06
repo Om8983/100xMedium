@@ -15,7 +15,7 @@ export const Login = () => {
 
   const [email, setEmail] = useState<string>("")
   const [password, SetPass] = useState<string>("")
-
+  const [loading, setLoading] = useState(false)
   const navigate = useNavigate();
   const RedirectLogin = () => {
     navigate('/signup')
@@ -24,6 +24,7 @@ export const Login = () => {
     let newUser: LoginSchema = {
       email, password
     }
+    setLoading(true)
     try {
       const response = await axios.post(`${USERS_BACKEND_URL}/login`, newUser, { withCredentials: true })
       if (response.status === 200) {
@@ -46,6 +47,8 @@ export const Login = () => {
         toast.error("Internal Server Error")
         navigate('/login')
       }
+    } finally {
+      setLoading(false)
     }
   }
   const variant = {
@@ -96,7 +99,7 @@ export const Login = () => {
             </div>
           </div>
 
-          <Button onclick={handleSignup} className="mt-4" text="Login"></Button>
+          <Button onclick={handleSignup} className="mt-4" loading={loading} text="Login"></Button>
           <div className="flex flex-col gap-8 mt-3">
             <div className="flex items-center">
               <span className="w-20 h-[0.05rem] bg-white " />

@@ -361,11 +361,28 @@ router.get("/authCheck", accessTokenValidation, async (c) => {
 router.get("/getOtp", async (c) => {
   const resend = new Resend(c.env.API_KEY);
   const { token, seconds } = generateOTP();
+  const body = c.req.query();
+  const { email } = body;
   const { data, error } = await resend.emails.send({
     from: "beLog <onboarding@resend.dev>",
-    to: ["omwadhi64@gmail.com"], // for now i can only send otp to my own email but as soon as I deploy my frontend to a specific domain i need to add the dns configs to the domain & only then will resend allow me to send mail to other emails
+    // to: ["omwadhi64@gmail.com"], // for now i can only send otp to my own email but as soon as I deploy my frontend to a specific domain i need to add the dns configs to the domain & only then will resend allow me to send mail to other emails
+    to: ["omwadhi64@gmail.com"],
     subject: "hello world",
-    html: `<strong>${token} is valid for ${seconds}</strong>`,
+    html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2 style="color: #333;">Email Verification</h2>
+          <p>Hello,</p>
+          <p>Your OTP code is:</p>
+          <div style="background: #f4f4f4; padding: 15px; border-radius: 5px; font-size: 24px; font-weight: bold; text-align: center; letter-spacing: 5px; margin: 20px 0;">
+            ${token}
+          </div>
+          <p>This OTP is valid for <strong>${seconds} seconds</strong>.</p>
+          <p>Or click the button below to verify directly:</p>
+          <p style="color: #666; font-size: 12px; margin-top: 20px;">
+            If you didn't request this verification, please ignore this email.
+          </p>
+        </div>
+      `,
   });
   if (error) {
     return c.json(error, 400);

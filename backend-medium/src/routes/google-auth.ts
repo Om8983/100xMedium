@@ -13,6 +13,7 @@ const router = new Hono<{
     DATABASE_URL: string;
     CLIENT_ID: string;
     CLIENT_SECRET: string;
+    FRONTEND_URL: string;
   };
 }>();
 
@@ -113,7 +114,7 @@ router.get("/redirect", async (c) => {
     return c.json({ msg: "error occured" }, 500);
   } finally {
     // finally redirect to blog pagec
-    return c.redirect("http://localhost:5173/protected");
+    return c.redirect(`${c.env.FRONTEND_URL}/protected`);
   }
 });
 

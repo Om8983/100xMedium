@@ -56,7 +56,7 @@ export const Blogs = () => {
       })
       setLoading(false)
     }
-  }, [blogData.contents])
+  }, [blogData.contents, loading])
 
   const handleScroll = () => {
     if (window.innerHeight + document.documentElement.scrollTop >= document.documentElement.offsetHeight - 100) {
@@ -95,7 +95,7 @@ export const Blogs = () => {
       </div>
     );
   }
-  console.log("hasdata", blogData.contents.hasData)
+
   return (
     <div className="flex flex-col gap-2 items-center w-screen min-h-screen bg-[url(/paper.png)] bg-fixed bg-no-repeat bg-cover  ">
       <NavLinks />
@@ -119,9 +119,9 @@ export const Blogs = () => {
         )
       }
       {
-        blogData.contents.hasData === null &&
+        !blogData.contents.hasData &&
         !loading &&
-        <div className="text-[#374151] pb-3 ">No more Blogs Exist</div>
+        <div className="text-[#374151] text-center mb-5 font-semibold lg:text-xl w-[400px] md:w-[500px] lg:w-[700px]  border rounded-[10px] border-black p-5 ">No more Blogs Exist</div>
       }
     </div >
   )
